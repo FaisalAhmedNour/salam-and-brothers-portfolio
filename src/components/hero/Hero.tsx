@@ -40,7 +40,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative h-[550px] overflow-hidden bg-neutral-950 md:h-[700px] font-arone">
+    <section className="relative h-[550px] overflow-hidden bg-neutral-950 md:h-[700px] font-arone round-t-md bg-white rounded-t-3xl">
 
       {/* Background Slideshow Container */}
       <div className="absolute inset-0 z-0">

@@ -278,32 +278,32 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="relative z-30 bg-white text-black shadow-sm font-arone">
+    <header className="relative z-30 bg-white text-black  font-arone">
       {/* Topbar layout */}
       <div className="hidden bg-white text-[13px] md:block">
         <div className="mx-auto flex h-10 max-w-[1240px] items-center justify-between px-6">
           <div className="flex items-center gap-2 text-gray-700">
             <AddressPinIcon />
             <span className="truncate">
-              Nazım Ercan Bulvarı No:4 Saray Mahallesi Kahramankazan 06980 Ankara / TÜRKİYE
+              Ekuria Tila Bari, South Keranigong Dhaka- 1311
             </span>
           </div>
 
           <div className="flex items-center gap-6">
             <a
-              href="mailto:info@turkishtransformer.com"
+              href="mailto: info@seecopowerlimited.com"
               className="flex items-center gap-2 text-gray-700 hover:text-brand-red transition-colors duration-200"
             >
               <EnvelopeMailIcon />
-              <span>info@turkishtransformer.com</span>
+              <span> info@seecopowerlimited.com</span>
             </a>
 
             <a
-              href="tel:+905325417402"
+              href="tel:+8801818430308"
               className="flex items-center gap-2 text-gray-700 hover:text-brand-red transition-colors duration-200"
             >
               <TelephonyPhoneIcon />
-              <span>+90 532 541 74 02</span>
+              <span>+88 01818 43 03 08</span>
             </a>
 
             <div className="h-4 w-px bg-gray-300" />
@@ -323,10 +323,10 @@ export default function Header() {
         <div className="mx-auto flex h-[90px] max-w-[1240px] items-center justify-between px-6">
           <a href="#" className="flex items-center" aria-label="Turkish Transformer Home">
             <Image
-              src="/images/logo-black.png"
+              src="/images/SEECOI1.png"
               alt="Turkish Transformer Logo"
-              width={215}
-              height={55}
+              width={180}
+              height={45}
               priority
               className="object-contain"
             />
@@ -336,6 +336,8 @@ export default function Header() {
           <div className="hidden lg:block">
             <HeaderDesktopNavLinks />
           </div>
+
+          <div className=""></div>
 
           {/* Mobile Navigation Trigger Toggle */}
           <button

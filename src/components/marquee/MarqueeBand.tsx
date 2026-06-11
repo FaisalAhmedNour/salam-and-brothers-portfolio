@@ -35,7 +35,7 @@ export default function MarqueeBand() {
         muted
         loop
         playsInline
-        className="absolute inset-0 z-0 h-full w-full object-cover opacity-35"
+        className="absolute inset-0 z-0 h-full w-full object-cover opacity-95"
         poster="/images/turkish-transfomr-maintance-1.jpg"
       >
         <source
@@ -47,16 +47,16 @@ export default function MarqueeBand() {
       </video>
 
       {/* Dark semi-transparent overlay to ensure content contrast */}
-      <div className="absolute inset-0 z-10 bg-black-5" />
+      <div className="absolute inset-0 z-10 bg-[#2e2d2d00]" />
 
       {/* Split layout grid wrapper */}
-      <div className="relative z-20 mx-auto grid max-w-[1240px] grid-cols-1 md:grid-cols-2 md:min-h-[500px]">
+      <div className="relative z-20 mx-auto grid max-w-310 grid-cols-1 md:grid-cols-2 md:min-h-125">
 
         {/* Left Column: Brand White Logo Container */}
-        <div className="flex items-center justify-center p-8 border-b border-neutral-800 md:border-b-0 md:border-r md:border-neutral-800">
-          <div className="relative h-[120px] w-full max-w-[320px]">
+        <div className="flex items-center justify-left p-8">
+          <div className="relative h-30 w-full max-w-[320px]">
             <Image
-              src="/images/logo-white.png"
+              src="/images/SEECOI1.png"
               alt="Turkish Transformer White Logo"
               fill
               sizes="(max-width: 768px) 320px, 400px"
@@ -66,29 +66,31 @@ export default function MarqueeBand() {
         </div>
 
         {/* Right Column: Scrolling Marquee Box */}
-        <div className="relative h-[500px] overflow-hidden">
-          <div className="vertical-marquee">
+        <div className="flex justify-end">
+          <div className="relative h-100 w-100 overflow-hidden flex justify-end">
+            <div className="vertical-marquee">
 
-            {/* Double mapped scrolling items for seamless looping */}
-            <div className="marquee-content py-4">
-              {SPECIALTY_TRANSFORMERS.map((transformerName, index) => (
-                <div
-                  key={`marq-1-${index}`}
-                  className="marquee-item text-[17px] font-medium tracking-wide text-white uppercase opacity-75"
-                >
-                  • {transformerName}
-                </div>
-              ))}
-              {SPECIALTY_TRANSFORMERS.map((transformerName, index) => (
-                <div
-                  key={`marq-2-${index}`}
-                  className="marquee-item text-[17px] font-medium tracking-wide text-white uppercase opacity-75"
-                >
-                  • {transformerName}
-                </div>
-              ))}
+              {/* Double mapped scrolling items for seamless looping */}
+              <div className="marquee-content py-4">
+                {SPECIALTY_TRANSFORMERS.map((transformerName, index) => (
+                  <div
+                    key={`marq-1-${index}`}
+                    className="marquee-item text-[17px] font-medium tracking-wide text-white uppercase opacity-75"
+                  >
+                    • {transformerName}
+                  </div>
+                ))}
+                {SPECIALTY_TRANSFORMERS.map((transformerName, index) => (
+                  <div
+                    key={`marq-2-${index}`}
+                    className="marquee-item text-[17px] font-medium tracking-wide text-white uppercase opacity-75"
+                  >
+                    • {transformerName}
+                  </div>
+                ))}
+              </div>
+
             </div>
-
           </div>
         </div>
       </div>
