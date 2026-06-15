@@ -8,8 +8,8 @@
 export default function BrandIntroduction() {
   return (
     <section id="about" className="bg-[#FAF9F5] py-20 px-6 font-arone text-center border-y border-gray-100">
-      <div className="mx-auto max-w-[800px]">
-        
+      <div className="mx-auto max-w-200">
+
         {/* Red Brand Subtitle */}
         <span className="font-kanit text-[15px] font-bold uppercase tracking-wider text-brand-red">
           Turkish Transformer

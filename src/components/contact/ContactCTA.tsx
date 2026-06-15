@@ -22,11 +22,11 @@ function ArrowRightLongIcon() {
 export default function ContactCTA() {
   return (
     <section id="contact" className="bg-[#FAF9F5] py-20 px-6 font-arone border-t border-gray-100">
-      <div className="mx-auto max-w-[1240px]">
-        
+      <div className="mx-auto max-w-310">
+
         {/* Responsive layout container: stacked on mobile, row on desktop */}
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
-          
+
           {/* Left Column: Heading (spans 4/12 on lg) */}
           <div className="text-center lg:col-span-4 lg:text-left">
             <h2 className="font-kanit text-[32px] font-bold leading-tight text-neutral-900 md:text-[44px] tracking-tight">
@@ -36,9 +36,9 @@ export default function ContactCTA() {
 
           {/* Center Column: Round Team Photo (spans 5/12 on lg) */}
           <div className="flex justify-center lg:col-span-5">
-            <div className="relative aspect-[4/5] w-full max-w-[360px] overflow-hidden bg-gray-100 shadow-md rounded-2xl border border-white">
+            <div className="relative aspect-4/5 w-full max-w-90 overflow-hidden bg-gray-100 shadow-md rounded-2xl border border-white">
               <Image
-                src="/images/Turkish-Transformer-Team.jpeg"
+                src="/images/transformer-maintenance.webp"
                 alt="Turkish Transformer Engineering and Production Team"
                 fill
                 sizes="(max-width: 768px) 360px, 450px"
@@ -51,7 +51,7 @@ export default function ContactCTA() {
           <div className="flex justify-center lg:col-span-3 lg:justify-end">
             <a
               href="mailto:info@turkishtransformer.com?subject=Transformer%20RFQ"
-              className="inline-flex w-full items-center justify-center gap-3 border-2 border-brand-red bg-transparent px-8 py-4.5 text-base font-bold text-neutral-950 transition-all duration-300 hover:bg-brand-red hover:text-white rounded-[6px] sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-3 border-2 border-brand-red bg-transparent px-8 py-4.5 text-base font-bold text-neutral-950 transition-all duration-300 hover:bg-brand-red hover:text-white rounded-md sm:w-auto"
             >
               <span>Get Started</span>
               <ArrowRightLongIcon />

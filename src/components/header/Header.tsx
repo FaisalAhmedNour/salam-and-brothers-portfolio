@@ -151,15 +151,15 @@ function HeaderDesktopNavLinks() {
 
               {/* Underline indicators with transitions */}
               {item.active ? (
-                <span className="absolute bottom-[20px] left-0 h-[2px] w-full bg-brand-red" />
+                <span className="absolute bottom-5 left-0 h-0.5 w-full bg-brand-red" />
               ) : (
-                <span className="absolute bottom-[20px] left-0 h-[2px] w-0 bg-brand-red transition-all duration-300 group-hover:w-full" />
+                <span className="absolute bottom-5 left-0 h-0.5 w-0 bg-brand-red transition-all duration-300 group-hover:w-full" />
               )}
             </a>
 
             {/* Dropdown overlay */}
             {item.hasDropdown && item.dropdownItems && activeDropdown === item.label && (
-              <ul className="absolute top-full left-0 z-50 w-[240px] border border-gray-100 bg-white py-2 shadow-xl animate-fade-in">
+              <ul className="absolute top-full left-0 z-50 w-60 border border-gray-100 bg-white py-2 shadow-xl animate-fade-in">
                 {item.dropdownItems.map((subItem) => (
                   <li key={subItem.label}>
                     <a
@@ -201,7 +201,7 @@ function HeaderMobileNavLinks({
     >
       <div
         className={[
-          "absolute right-0 top-0 bottom-0 w-[280px] bg-white p-6 shadow-2xl transition-transform duration-300",
+          "absolute right-0 top-0 bottom-0 w-70 bg-white p-6 shadow-2xl transition-transform duration-300",
           isOpened ? "translate-x-0" : "translate-x-full",
         ].join(" ")}
         onClick={(e) => e.stopPropagation()} // Prevent closing when tapping content
@@ -281,7 +281,7 @@ export default function Header() {
     <header className="relative z-30 bg-white text-black  font-arone">
       {/* Topbar layout */}
       <div className="hidden bg-white text-[13px] md:block">
-        <div className="mx-auto flex h-10 max-w-[1240px] items-center justify-between px-6">
+        <div className="mx-auto flex h-10 max-w-310 items-center justify-between px-6">
           <div className="flex items-center gap-2 text-gray-700">
             <AddressPinIcon />
             <span className="truncate">
@@ -320,7 +320,7 @@ export default function Header() {
 
       {/* Main Navbar */}
       <div className="bg-white">
-        <div className="mx-auto flex h-[90px] max-w-[1240px] items-center justify-between px-6">
+        <div className="mx-auto flex h-22.5 max-w-310 items-center justify-between px-6">
           <a href="#" className="flex items-center" aria-label="Turkish Transformer Home">
             <Image
               src="/images/SEECOI1.png"
@@ -328,7 +328,7 @@ export default function Header() {
               width={180}
               height={45}
               priority
-              className="object-contain"
+              className="object-contain h-auto"
             />
           </a>
 

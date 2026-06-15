@@ -60,13 +60,13 @@ export default function Widgets() {
 
   return (
     <div className="font-arone">
-      
+
       {/* WhatsApp Sticky Contact Button (bottom-left) */}
       <a
         href="https://wa.me/905325417402?text=Hello%21%20I%20have%20a%20question%20about%20your%20transformer%20solutions."
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-[30px] left-[30px] z-[999] flex items-center gap-2.5 rounded-full bg-[#16BE45] px-5 py-3.5 text-[15px] font-bold text-white shadow-lg transition-transform duration-300 hover:scale-105 active:scale-95"
+        className="fixed bottom-7.5 left-7.5 z-999 flex items-center gap-2.5 rounded-full bg-[#16BE45] px-5 py-3.5 text-[15px] font-bold text-white shadow-lg transition-transform duration-300 hover:scale-105 active:scale-95"
       >
         <BrandWhatsAppIcon />
         <span>Message Us</span>
@@ -76,7 +76,7 @@ export default function Widgets() {
       <button
         onClick={handleScrollToTop}
         className={[
-          "fixed bottom-[30px] right-[30px] z-[999] grid h-12 w-12 place-items-center rounded-lg bg-brand-red text-white shadow-lg border border-red-500/20 transition-all duration-300",
+          "fixed bottom-7.5 right-7.5 z-999 grid h-12 w-12 place-items-center rounded-lg bg-brand-red text-white shadow-lg border border-red-500/20 transition-all duration-300",
           isScrollButtonVisible
             ? "translate-y-0 opacity-100 pointer-events-auto"
             : "translate-y-10 opacity-0 pointer-events-none",

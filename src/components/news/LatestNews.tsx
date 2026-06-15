@@ -47,7 +47,7 @@ export default function LatestNews() {
   return (
     <section id="blog" className="bg-white py-20 px-6 font-arone border-t border-gray-100">
       <div className="mx-auto max-w-[1240px]">
-        
+
         {/* News Section Header */}
         <div className="text-center mb-16 max-w-[800px] mx-auto">
           <h2 className="font-kanit text-[32px] font-bold text-neutral-900 md:text-[42px] tracking-tight">
@@ -65,10 +65,10 @@ export default function LatestNews() {
               key={post.id}
               className="group flex flex-col justify-between border border-gray-150 bg-white overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md rounded-xl"
             >
-              
+
               {/* Image Container with Zoom Animation */}
               <div>
-                <a href={post.linkHref} className="relative block aspect-[4/3] w-full overflow-hidden bg-gray-50">
+                <a href={post.linkHref} className="relative block aspect-4/3 w-full overflow-hidden bg-gray-50">
                   <Image
                     src={post.imagePath}
                     alt={post.title}
@@ -80,7 +80,7 @@ export default function LatestNews() {
 
                 {/* Article Copy Details */}
                 <div className="p-6">
-                  
+
                   {/* Article Title */}
                   <h3 className="font-kanit text-[19px] font-bold text-neutral-900 transition-colors duration-300 hover:text-brand-red">
                     <a href={post.linkHref}>{post.title}</a>

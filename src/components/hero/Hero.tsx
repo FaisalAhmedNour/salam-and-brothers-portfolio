@@ -17,9 +17,9 @@ function AngleRightChevronIcon() {
 
 // Background images list for slides
 const HERO_SLIDESHOW_IMAGES = [
-  "/images/Distribution-Transformers-1.png",
-  "/images/power-transformer.png",
-  "/images/turkish-transfomr-maintance-1.jpg"
+  "/images/Transformer1.1.png",
+  "/images/Transformer2.1.png",
+  "/images/Transformer3.1.png"
 ];
 
 /**
@@ -40,7 +40,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative h-[550px] overflow-hidden bg-neutral-950 md:h-[700px] font-arone round-t-md bg-white rounded-t-3xl">
+    <section className="relative h-h-137.5 overflow-hidden bg-white md:h-175 font-arone round-t-md rounded-t-3xl">
 
       {/* Background Slideshow Container */}
       <div className="absolute inset-0 z-0">
@@ -75,11 +75,11 @@ export default function Hero() {
 
       {/* Content layout wrapper */}
       <div className="relative z-20 flex h-full items-center px-6 py-16 md:px-12 lg:px-20">
-        <div className="mx-auto flex w-full max-w-[1240px] justify-end lg:justify-end">
+        <div className="mx-auto flex w-full max-w-310 justify-end lg:justify-end">
           <div className="text-center text-white lg:mr-[6.5%] lg:text-right space-y-5">
 
             {/* Upper Badge Tag */}
-            <div className="mb-6 inline-flex rounded-[4px] bg-brand-red px-[18px] py-3 text-sm font-bold leading-none text-white tracking-wider">
+            <div className="mb-6 inline-flex rounded-sm bg-brand-red px-4.5 py-3 text-sm font-bold leading-none text-white tracking-wider">
               High Efficiency &amp; High Performance
             </div>
 
@@ -106,7 +106,7 @@ export default function Hero() {
       </div>
 
       {/* Fade out transition element at the bottom to blend with white content */}
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 h-[150px] bg-gradient-to-t from-white via-white/70 to-transparent" />
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 h-32 bg-linear-to-t from-white to-transparent" />
     </section>
   );
 }

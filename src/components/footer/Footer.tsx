@@ -11,32 +11,27 @@ interface GlobalShippingLocation {
   left: number; // Percentage from left
 }
 
-// Shipping locations coordinate mapping
+// Shipping locations coordinate mapping for Bangladesh districts
 const SHIPPING_DESTINATIONS: GlobalShippingLocation[] = [
-  { name: "Canada", top: 20, left: 15 },
-  { name: "United States", top: 30, left: 14 },
-  { name: "Haiti", top: 40, left: 20 },
-  { name: "Peru", top: 58, left: 19 },
-  { name: "United Kingdom", top: 22, left: 44 },
-  { name: "Germany", top: 20, left: 48 },
-  { name: "Bulgaria", top: 25, left: 52 },
-  { name: "Ukraine", top: 19, left: 54 },
-  { name: "Libya", top: 36, left: 50 },
-  { name: "Nigeria", top: 48, left: 47 },
-  { name: "Kenya", top: 52, left: 56 },
-  { name: "Azerbaijan", top: 26, left: 59 },
-  { name: "Kazakhstan", top: 19, left: 63 },
-  { name: "Russia", top: 13, left: 67 },
-  { name: "Kyrgyzstan", top: 23, left: 66 },
-  { name: "Philippines", top: 42, left: 82 }
+  { name: "Rangpur", top: 18, left: 33 },
+  { name: "Sylhet", top: 29, left: 60 },
+  { name: "Bogura", top: 31, left: 35 },
+  { name: "Mymensingh", top: 33, left: 46 },
+  { name: "Rajshahi", top: 36, left: 27 },
+  { name: "Cumilla", top: 55, left: 53 },
+  { name: "Chattogram", top: 66, left: 61 },
+  { name: "Cox's Bazar", top: 77, left: 62 },
+  { name: "Khulna", top: 65, left: 34 },
+  { name: "Barishal", top: 61, left: 44 },
+  { name: "Jashore", top: 56, left: 33 },
 ];
 
-// Turkey coordinates serving as the shipping source center
-const TURKEY_SOURCE_COORDS = { top: 28, left: 54 };
+// Dhaka coordinates serving as the central distribution/shipping source center
+const DHAKA_SOURCE_COORDS = { top: 46, left: 41 };
 
 // SVG coordinate constants
-const MAP_SVG_WIDTH = 1000;
-const MAP_SVG_HEIGHT = 535;
+const MAP_SVG_WIDTH = 1536;
+const MAP_SVG_HEIGHT = 1024;
 
 /**
  * Address / Location pin icon for footer contact list.
@@ -77,9 +72,9 @@ function FooterPhoneIcon() {
  * and a fully animated SVG global shipping destination map.
  */
 export default function Footer() {
-  // Source Turkey point translated to SVG coordinates
-  const turkeySvgX = (TURKEY_SOURCE_COORDS.left * MAP_SVG_WIDTH) / 100;
-  const turkeySvgY = (TURKEY_SOURCE_COORDS.top * MAP_SVG_HEIGHT) / 100;
+  // Source Dhaka point translated to SVG coordinates
+  const dhakaSvgX = (DHAKA_SOURCE_COORDS.left * MAP_SVG_WIDTH) / 100;
+  const dhakaSvgY = (DHAKA_SOURCE_COORDS.top * MAP_SVG_HEIGHT) / 100;
 
   // Generate dynamic keyframes for glowing lines based on calculated curve lengths
   const curvePathsStyles = SHIPPING_DESTINATIONS.map((loc, index) => {
@@ -87,7 +82,7 @@ export default function Footer() {
     const destY = (loc.top * MAP_SVG_HEIGHT) / 100;
     // Approximating cubic path length for proper dashoffset calculation
     const approximatedLength = Math.round(
-      Math.sqrt((destX - turkeySvgX) ** 2 + (destY - turkeySvgY) ** 2) * 1.25
+      Math.sqrt((destX - dhakaSvgX) ** 2 + (destY - dhakaSvgY) ** 2) * 1.25
     );
 
     return `
@@ -164,8 +159,8 @@ export default function Footer() {
                 src="/images/SEECOI1.png"
                 alt="Turkish Transformer Footer Brand Logo"
                 width={180}
-                height={46}
-                className="object-contain"
+                height={45}
+                className="object-contain h-auto"
               />
 
               <ul className="text-[13px] text-neutral-700">
@@ -201,10 +196,10 @@ export default function Footer() {
 
                 {/* World map layout image */}
                 <Image
-                  src="/images/map.webp"
-                  alt="World Map illustrating Turkish Transformer shipment paths"
-                  width={1000}
-                  height={535}
+                  src="/images/bangladesh_map.png"
+                  alt="Bangladesh Map illustrating Seeco Power shipment paths"
+                  width={1536}
+                  height={1024}
                   className="w-full object-contain"
                 />
 
@@ -232,14 +227,14 @@ export default function Footer() {
                     const destY = (loc.top * MAP_SVG_HEIGHT) / 100;
 
                     // Curve control point mid calculations
-                    const midX = (turkeySvgX + destX) / 2;
-                    const midY = Math.min(turkeySvgY, destY) - Math.abs(destX - turkeySvgX) * 0.22;
+                    const midX = (dhakaSvgX + destX) / 2;
+                    const midY = Math.min(dhakaSvgY, destY) - Math.abs(destX - dhakaSvgX) * 0.22;
 
-                    const pathD = `M${turkeySvgX},${turkeySvgY} Q${midX},${midY} ${destX},${destY}`;
+                    const pathD = `M${dhakaSvgX},${dhakaSvgY} Q${midX},${midY} ${destX},${destY}`;
                     const pathId = `er-path-${i}`;
                     const delayTime = 1.2 + i * 0.15;
                     const approximatedLength = Math.round(
-                      Math.sqrt((destX - turkeySvgX) ** 2 + (destY - turkeySvgY) ** 2) * 1.25
+                      Math.sqrt((destX - dhakaSvgX) ** 2 + (destY - dhakaSvgY) ** 2) * 1.25
                     );
 
                     return (
@@ -312,19 +307,19 @@ export default function Footer() {
                     </div>
                   ))}
 
-                  {/* Central Turkey Source point */}
+                  {/* Central Dhaka Source point */}
                   <div
                     className="er-hotspot-turkey"
                     style={{
-                      top: `${TURKEY_SOURCE_COORDS.top}%`,
-                      left: `${TURKEY_SOURCE_COORDS.left}%`,
+                      top: `${DHAKA_SOURCE_COORDS.top}%`,
+                      left: `${DHAKA_SOURCE_COORDS.left}%`,
                     }}
                   >
                     <div className="er-turkey-ring r1" />
                     <div className="er-turkey-ring r2" />
                     <div className="er-turkey-ring r3" />
                     <div className="er-turkey-core" />
-                    <div className="er-turkey-label font-arone font-bold">TT</div>
+                    <div className="er-turkey-label font-arone font-bold">HQ</div>
                   </div>
                 </div>
 
@@ -335,7 +330,7 @@ export default function Footer() {
 
         {/* Copywrite notice footer bar */}
         <div className="flex justify-center pt-5 text-gray-500 gap-4">
-          <p>© 2025-2026 Created Faisal | Seeco Power Limited</p>
+          <p>© 2025-2026 Created JAASBD | Seeco Power Limited</p>
           {/* <p>© 2025-2026 Turkish Transformer. All Rights Reserved.</p> */}
           {/* <p>
             Created by{" "}

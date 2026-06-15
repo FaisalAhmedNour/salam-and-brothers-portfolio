@@ -65,8 +65,8 @@ function ArrowRightSmallIcon() {
 export default function ProductsGrid() {
   return (
     <section id="products" className="bg-white py-16 px-6 md:py-24 font-arone">
-      <div className="mx-auto max-w-[1240px]">
-        
+      <div className="mx-auto max-w-310">
+
         {/* Responsive Grid layout for cards */}
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {PRODUCTS_LIST_DATA.map((product) => (
@@ -75,7 +75,7 @@ export default function ProductsGrid() {
               id={product.id}
               className="group flex flex-col justify-between border border-gray-100 bg-white p-5 shadow-sm transition-all duration-300 hover:shadow-lg rounded-xl"
             >
-              
+
               {/* Card Image element with scale hover */}
               <div>
                 <a href={product.linkHref} className="relative block aspect-square w-full overflow-hidden bg-gray-50 rounded-lg">
