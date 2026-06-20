@@ -136,7 +136,7 @@ export default function Footer() {
                 <li className="underline font-semibold"><a href={getHref("#")} className="hover:text-brand-red transition-colors">{t("nav.home")}</a></li>
                 <li className="underline font-semibold"><a href={getHref("#about")} className="hover:text-brand-red transition-colors">{t("nav.aboutUs")}</a></li>
                 <li className="underline font-semibold"><a href={getHref("#products")} className="hover:text-brand-red transition-colors">{t("nav.products")}</a></li>
-                <li className="underline font-semibold"><a href={getHref("#contact")} className="hover:text-brand-red transition-colors">{t("nav.contact")}</a></li>
+                <li className="underline font-semibold"><a href={getHref("/contact")} className="hover:text-brand-red transition-colors">{t("nav.contact")}</a></li>
               </ul>
             </div>
 

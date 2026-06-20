@@ -38,7 +38,7 @@ const HEADER_NAVIGATION_ITEMS: NavigationLinkItem[] = [
   },
   { labelKey: "nav.service", href: "#marquee-band" },
   { labelKey: "nav.blog", href: "#blog" },
-  { labelKey: "nav.contact", href: "#contact" },
+  { labelKey: "nav.contact", href: "/contact" },
   { labelKey: "nav.notice", href: "#notice" },
 ];
 
