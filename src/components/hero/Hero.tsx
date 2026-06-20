@@ -77,8 +77,8 @@ export default function Hero() {
 
       {/* Content layout wrapper */}
       <div className="relative z-20 flex h-full items-center px-6 md:px-12">
-        <div className="mx-auto flex w-full max-w-310 justify-end lg:justify-end pb-20">
-          <div className="text-center text-white lg:mr-[6.5%] lg:text-right space-y-5">
+        <div className="mx-auto flex w-full max-w-310 justify-end lg:justify-end pb-48">
+          <div className="text-center text-white lg:text-right space-y-5">
 
             {/* Upper Badge Tag */}
             <div className="mb-6 inline-flex rounded-sm bg-brand-red px-4.5 py-3 text-sm font-bold leading-none text-white tracking-wider">
@@ -98,7 +98,7 @@ export default function Hero() {
             {/* Call to action button */}
             <a
               href="#contact"
-              className="mt-10 inline-flex w-full items-center justify-center gap-3 rounded-[3px] bg-brand-red px-8 py-3 text-base font-bold text-white shadow-[0_0_0_2px_rgba(255,255,255,0.85)] transition-all duration-300 hover:bg-brand-red-hover hover:scale-102 sm:w-auto"
+              className="mt-6 inline-flex w-full items-center justify-center gap-3 rounded-[3px] bg-brand-red px-8 py-3 text-base font-bold text-white shadow-[0_0_0_2px_rgba(255,255,255,0.85)] transition-all duration-300 hover:bg-brand-red-hover hover:scale-102 sm:w-auto"
             >
               <span>{t("hero.button")}</span>
               <AngleRightChevronIcon />
