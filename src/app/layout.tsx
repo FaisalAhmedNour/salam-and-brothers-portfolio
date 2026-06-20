@@ -54,6 +54,7 @@ export default function RootLayout({
           montserratFont.variable,
           "antialiased font-arone",
         ].join(" ")}
+        suppressHydrationWarning
       >
         <LanguageProvider>
           <div className="relative flex flex-col min-h-screen">
