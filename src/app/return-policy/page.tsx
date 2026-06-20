@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { returnPolicyContent } from "./content";
 
@@ -78,30 +79,36 @@ export default function ReturnPolicyPage() {
   return (
     <div className="relative bg-white text-black">
       {/* 1. Page Hero header Section */}
-      <section className="relative bg-linear-to-b from-neutral-50 via-white to-neutral-50/50 border-b border-gray-150 py-6 lg:py-10 font-montserrat">
-        <div className="mx-auto max-w-310 px-6 text-center">
-          {/* Breadcrumbs navigation */}
-          <nav className="flex justify-center items-center gap-2 mb-2 text-[14px] font-semibold text-gray-500">
-            <Link href="/" className="hover:text-brand-red transition-colors duration-200">
-              {language === "bn" ? "হোম" : "Home"}
-            </Link>
-            <ChevronRightIcon />
-            <span className="text-gray-900">{data.title}</span>
-          </nav>
+      <section className="mx-auto max-w-310 px-6 pt-6 font-montserrat">
+        <div className="relative overflow-hidden rounded-[20px] bg-neutral-900 py-12 md:py-16 text-center text-white shadow-md">
+          {/* Background image container representing industrial transformer setting */}
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/images/Transformer3.1.png"
+              alt={`${data.title} background`}
+              fill
+              priority
+              className="object-cover object-center"
+            />
+            {/* Semi-transparent dark blue overlay for high-contrast legible typography */}
+            <div className="absolute inset-0 bg-[#0B3A72]/85" />
+          </div>
 
-          {/* Page Headers */}
-          <h1 className="font-kanit text-[36px] md:text-[48px] font-extrabold text-neutral-900 leading-tight uppercase tracking-tight mb-3">
-            {data.title}
-          </h1>
+          {/* Content container aligned center relative to overlay */}
+          <div className="relative z-10 mx-auto max-w-2xl px-4">
+            {/* Primary Page Heading */}
+            <h1 className="font-kanit text-[32px] md:text-[44px] font-bold text-white leading-tight uppercase tracking-tight mb-3">
+              {data.title}
+            </h1>
 
-          {/* Dates metadata metrics */}
-          <div className="flex flex-wrap items-center justify-center gap-4 text-[13px] font-medium text-gray-500">
-            <span className="bg-gray-100/80 px-3 py-1.5 rounded-full border border-gray-200/50">
-              <strong>{data.effectiveDateLabel}:</strong> {data.effectiveDate}
-            </span>
-            <span className="bg-gray-100/80 px-3 py-1.5 rounded-full border border-gray-200/50">
-              <strong>{data.lastUpdatedLabel}:</strong> {data.lastUpdated}
-            </span>
+            {/* Breadcrumbs navigation structure with vertical pipe separator */}
+            <nav className="flex justify-center items-center gap-2 text-[14px] font-semibold text-gray-200">
+              <Link href="/" className="hover:text-brand-red transition-colors duration-200">
+                {language === "bn" ? "হোম" : "Home"}
+              </Link>
+              <span className="text-gray-400">|</span>
+              <span className="text-white font-bold">{data.title}</span>
+            </nav>
           </div>
         </div>
       </section>
