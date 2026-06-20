@@ -87,7 +87,7 @@ export default function MarqueeBand() {
                       <span className="text-[25px] leading-tight shrink-0">•</span>
                       <div className="flex flex-col text-left">
                         <span className="leading-tight">{item.en}</span>
-                        <span className="text-[13px] text-gray-300 normal-case mt-1 font-normal font-sans">
+                        <span className="text-[13px] text-gray-100 normal-case mt-1 font-normal font-sans">
                           {item.bn}
                         </span>
                       </div>
@@ -103,7 +103,7 @@ export default function MarqueeBand() {
                       <span className="text-[25px] leading-tight shrink-0">•</span>
                       <div className="flex flex-col text-left">
                         <span className="leading-tight">{item.en}</span>
-                        <span className="text-[13px] text-gray-300 normal-case mt-1 font-normal font-sans">
+                        <span className="text-[13px] text-gray-100 normal-case mt-1 font-bold font-sans">
                           {item.bn}
                         </span>
                       </div>
