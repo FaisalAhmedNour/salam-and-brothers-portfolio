@@ -36,7 +36,7 @@ const HEADER_NAVIGATION_ITEMS: NavigationLinkItem[] = [
       { labelKey: "nav.renewableEnergy", href: "#products-renewable" },
     ],
   },
-  { labelKey: "nav.service", href: "#marquee-band" },
+  { labelKey: "nav.service", href: "/services" },
   { labelKey: "nav.blog", href: "/blog" },
   { labelKey: "nav.contact", href: "/contact" },
   { labelKey: "nav.notice", href: "/notices" },
