@@ -6,7 +6,7 @@ import { PrivacyPolicyData } from "../privacy-policy/content";
  */
 export const returnPolicyContent: Record<"en" | "bn", PrivacyPolicyData> = {
   en: {
-    title: "RETURN POLICY",
+    title: "Return Policy",
     companyName: "SEECO Power Limited",
     effectiveDateLabel: "Effective Date",
     effectiveDate: "June 01, 2026",

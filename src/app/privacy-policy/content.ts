@@ -36,7 +36,7 @@ export interface PrivacyPolicyData {
  */
 export const privacyPolicyContent: Record<"en" | "bn", PrivacyPolicyData> = {
   en: {
-    title: "PRIVACY POLICY",
+    title: "Privacy Policy",
     companyName: "SEECO Power Limited",
     effectiveDateLabel: "Effective Date",
     effectiveDate: "June 01, 2026",

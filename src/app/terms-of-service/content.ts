@@ -6,7 +6,7 @@ import { PrivacyPolicyData } from "../privacy-policy/content";
  */
 export const termsOfServiceContent: Record<"en" | "bn", PrivacyPolicyData> = {
   en: {
-    title: "TERMS OF SERVICE",
+    title: "Terms of Services",
     companyName: "SEECO Power Limited",
     effectiveDateLabel: "Effective Date",
     effectiveDate: "June 01, 2026",

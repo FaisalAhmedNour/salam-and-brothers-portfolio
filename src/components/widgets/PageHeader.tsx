@@ -51,7 +51,7 @@ export default function PageHeader({
         {/* Content container centering elements within the overlay */}
         <div className="relative z-10 mx-auto max-w-2xl px-4">
           {/* Primary Page Heading */}
-          <h1 className="font-kanit text-[32px] md:text-[44px] font-bold text-white leading-tight uppercase tracking-tight mb-3">
+          <h1 className="font-kanit text-[32px] md:text-[44px] font-bold text-white leading-tight capitalize tracking-tight mb-3">
             {title}
           </h1>
 
