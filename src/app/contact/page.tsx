@@ -106,11 +106,9 @@ function PhoneIcon() {
   );
 }
 
-
-
 // List of country codes with code, 2-letter country code, and name for selector
 const COUNTRY_CODES = [
-  { code: "+880", country: "BD", name: "Bangladesh" }, // Default option at top
+  { code: "+880", country: "BD", name: "Bangladesh" },
   { code: "+93", country: "AF", name: "Afghanistan" },
   { code: "+355", country: "AL", name: "Albania" },
   { code: "+213", country: "DZ", name: "Algeria" },
@@ -337,12 +335,11 @@ const COUNTRY_CODES = [
   { code: "+379", country: "VA", name: "Vatican City" },
   { code: "+58", country: "VE", name: "Venezuela" },
   { code: "+84", country: "VN", name: "Vietnam" },
-  { code: "+1-284", country: "VG", name: "Virgin Islands (British)" },
   { code: "+1-340", country: "VI", name: "Virgin Islands (US)" },
   { code: "+681", country: "WF", name: "Wallis and Futuna" },
   { code: "+967", country: "YE", name: "Yemen" },
   { code: "+260", country: "ZM", name: "Zambia" },
-  { code: "+263", country: "ZW", name: "Zimbabwe" }
+  { code: "+263", country: "ZW", name: "Zimbabwe" },
 ];
 
 /**
@@ -381,7 +378,7 @@ export default function ContactPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, mobile: fullMobile, subject, message }),
+        body: JSON.stringify({ name, email, mobile: fullMobile, title: subject, message }),
       });
 
       if (response.ok) {
@@ -394,6 +391,7 @@ export default function ContactPage() {
         setMessage("");
       } else {
         setSubmitSuccess(false);
+        console.log('error', response);
       }
     } catch (error) {
       console.error("Failed to submit message:", error);
@@ -519,7 +517,7 @@ export default function ContactPage() {
               <form onSubmit={handleFormSubmit} className="space-y-6">
 
                 {/* Two Column Grid on Tablet/Desktop for name & email */}
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div className="space-y-2">
                     <label htmlFor="name" className="text-[14px] font-bold text-neutral-800">
                       {text.name} <span className="text-brand-red">*</span>
@@ -552,8 +550,8 @@ export default function ContactPage() {
                 </div>
 
                 {/* Two Column Grid on Tablet/Desktop for mobile & subject */}
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <div className="space-y-2">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div className="space-y-1">
                     <label htmlFor="mobile" className="text-[14px] font-bold text-neutral-800 flex items-center gap-1.5">
                       {text.mobile} <span className="text-neutral-400 text-[12px] font-medium">({language === "bn" ? "ঐচ্ছিক" : "Optional"})</span>
                     </label>
@@ -562,7 +560,7 @@ export default function ContactPage() {
                         aria-label="Country Code"
                         value={countryCode}
                         onChange={(e) => setCountryCode(e.target.value)}
-                        className="bg-transparent pl-3 pr-2 py-3 border-r border-neutral-200 text-[15px] focus:outline-hidden text-neutral-700 font-medium cursor-pointer"
+                        className="bg-neutral-100 pl-1 py-3 border-r border-neutral-200 text-[13px] focus:outline-hidden text-neutral-700 font-medium cursor-pointer"
                       >
                         {COUNTRY_CODES.map((item) => (
                           <option key={`${item.country}-${item.code}`} value={item.code}>
@@ -576,7 +574,7 @@ export default function ContactPage() {
                         value={mobileNumber}
                         onChange={(e) => setMobileNumber(e.target.value)}
                         placeholder={text.placeholderMobile}
-                        className="w-full px-4 py-3 bg-transparent focus:outline-hidden text-[15px]"
+                        className="w-full px-4 pl-1 py-3 bg-transparent focus:outline-hidden text-[15px]"
                       />
                     </div>
                   </div>
