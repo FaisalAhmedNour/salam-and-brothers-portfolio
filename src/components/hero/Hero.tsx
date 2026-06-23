@@ -108,7 +108,7 @@ export default function Hero() {
       </div>
 
       {/* Fade out transition element at the bottom to blend with white content */}
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 h-32 bg-linear-to-t from-white to-transparent" />
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 h-28 bg-linear-to-t from-white via-white-700 to-transparent" />
     </section>
   );
 }

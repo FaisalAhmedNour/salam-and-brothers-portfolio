@@ -1,0 +1,290 @@
+[
+  {
+    "id": "distribution-transformers",
+    "slug": "distribution-transformers",
+    "category": "transformers",
+    "imagePath": "/images/power-transformer.png",
+    "title": {
+      "en": "Distribution Transformers",
+      "bn": "ডিস্ট্রিবিউশন ট্রান্সফরমার"
+    },
+    "subtitle": {
+      "en": "Oil-Immersed Distribution Transformers (10 - 5000 kVA)",
+      "bn": "অয়েল-ইমার্সড ডিস্ট্রিবিউশন ট্রান্সফরমার (১০ – ৫০০০ কেভিএ)"
+    },
+    "description": {
+      "en": "SEECO Transformer's distribution transformers ensure efficient voltage conversion for safe energy delivery in residential, industrial, and commercial areas.",
+      "bn": "সিকো ডিস্ট্রিবিউশন ট্রান্সফরমারসমূহ আবাসিক, শিল্প এবং বাণিজ্যিক এলাকায় নিরাপদ বিদ্যুৎ সরবরাহের জন্য দক্ষ ভোল্টেজ রূপান্তর নিশ্চিত করে।"
+    },
+    "overview": {
+      "en": "Our oil-immersed distribution transformers are engineered to deliver high efficiency, field reliability, and thermal durability. Fully compliant with IEC 60076 standards and the EU Ecodesign Tier 2 regulation, these transformers serve utilities, heavy industries, solar/wind farms, and large commercial infrastructures to safely step down medium-voltage power for local grids.",
+      "bn": "আমাদের অয়েল-ইমার্সড ডিস্ট্রিবিউশন ট্রান্সফরমারসমূহ উচ্চ দক্ষতা, দীর্ঘস্থায়ী স্থায়িত্ব এবং মাঠপর্যায়ে নির্ভরযোগ্যতা নিশ্চিত করার জন্য বিশেষভাবে ডিজাইন করা হয়েছে। আইইসি ৬০৭৬ (IEC 60076) এবং ইউরোপীয় Ecodesign Tier 2 নিয়মাবলী মেনে তৈরি এই ট্রান্সফরমারগুলো বিদ্যুৎ বিতরণকারী সংস্থা, মাঝারি ও ভারী শিল্প কারখানা, সোলার/উইন্ড বিদ্যুৎ কেন্দ্র এবং বড় বাণিজ্যিক ভবনে নিরাপদ বিদ্যুৎ সরবরাহে ব্যবহৃত হয়।"
+    },
+    "specs": {
+      "rating": {
+        "en": "10 - 5000 kVA",
+        "bn": "১০ - ৫০০০ কেভিএ"
+      },
+      "voltage": {
+        "en": "Up to 36 kV",
+        "bn": "৩৬ কেভি পর্যন্ত"
+      },
+      "standard": {
+        "en": "IEC 60076 / EU Tier 2",
+        "bn": "IEC 60076 / EU Tier 2"
+      }
+    }
+  },
+  {
+    "id": "power-transformers",
+    "slug": "power-transformers",
+    "category": "transformers",
+    "imagePath": "/images/Distribution-Transformers-1.png",
+    "title": {
+      "en": "Power Transformers",
+      "bn": "পাওয়ার ট্রান্সফরমার"
+    },
+    "subtitle": {
+      "en": "High-Voltage Oil-Immersed Power Transformers (up to 35 MVA, 245 kV)",
+      "bn": "হাই-ভোল্টেজ অয়েল-ইমার্সড পাওয়ার ট্রান্সফরমার (৩৫ এমভিএ, ২৪৫ কেভি পর্যন্ত)"
+    },
+    "description": {
+      "en": "SEECO Transformer provides industry-specific solutions with high-quality power transformers, transforming energy infrastructure with safety and efficiency.",
+      "bn": "সিকো পাওয়ার ট্রান্সফরমারসমূহ জাতীয় গ্রিড ও ভারী শিল্পে ব্যবহার উপযোগী শক্তির রূপান্তর ও দক্ষ নিরাপত্তা নিশ্চিত করতে ডিজাইন করা হয়েছে।"
+    },
+    "overview": {
+      "en": "Our high-reliability oil-immersed power transformers are engineered to withstand severe electrical stress, high thermal load cycles, and demanding environmental conditions. Configured up to 35 MVA and 245 kV, these units are ideally suited for utility transmission and sub-transmission substations, industrial processing plants (such as steel mills, chemical plants, and refineries), and large-scale renewable energy grid connections.",
+      "bn": "আমাদের উচ্চ-নির্ভরযোগ্য অয়েল-ইমার্সড পাওয়ার ট্রান্সফরমারসমূহ তীব্র বৈদ্যুতিক চাপ, অধিক লোড সাইকেল এবং প্রতিকূল পরিবেশগত পরিস্থিতি সহ্য করার জন্য বিশেষভাবে ডিজাইন করা হয়েছে। ৩৫ এমভিএ এবং ২৪৫ কেভি পর্যন্ত ক্ষমতাসম্পন্ন এই ট্রান্সফরমারগুলো জাতীয় গ্রিড সাবস্টেশন, বৃহৎ বিদ্যুৎ উৎপাদন কেন্দ্র (তাপ বিদ্যুৎ, জলবিদ্যুৎ, গ্যাস টারবাইন), ভারী শিল্প কারখানা (যেমন স্টিল মিল, রাসায়নিক প্ল্যান্ট, শোধনাগার) এবং উচ্চ-ক্ষমতার নবায়নযোগ্য বিদ্যুৎ কেন্দ্রের সংযোগে ব্যবহৃত হয়।"
+    },
+    "specs": {
+      "rating": {
+        "en": "5 - 35 MVA",
+        "bn": "৫ - ৩৫ এমভিএ"
+      },
+      "voltage": {
+        "en": "Up to 245 kV",
+        "bn": "২৪৫ কেভি পর্যন্ত"
+      },
+      "standard": {
+        "en": "IEC 60076 / ANSI / IEEE",
+        "bn": "IEC 60076 / ANSI / IEEE"
+      }
+    }
+  },
+  {
+    "id": "special-type-transformers",
+    "slug": "special-type-transformers",
+    "category": "transformers",
+    "imagePath": "/images/special-type.png",
+    "title": {
+      "en": "Special Type Transformers",
+      "bn": "স্পেশাল টাইপ ট্রান্সফরমার"
+    },
+    "subtitle": {
+      "en": "Custom-Engineered Special Transformers & Reactors (up to 30 MVA)",
+      "bn": "কাস্টম-ইঞ্জিনিয়ার্ড বিশেষ ট্রান্সফরমার ও রিঅ্যাক্টরসমূহ (৩০ এমভিএ পর্যন্ত)"
+    },
+    "description": {
+      "en": "SEECO Transformer’s special-type transformers ensure efficient voltage conversion for safe energy delivery in residential, industrial, and commercial areas.",
+      "bn": "উচ্চ হারমোনিক লোড, ভারসাম্যহীন বিদ্যুৎ প্রবাহ ও তীব্র ওভারলোড সহনশীল স্পেশাল-টাইপ ট্রান্সফরমার কাস্টম ডিজাইন করা হয়।"
+    },
+    "overview": {
+      "en": "Our special-type transformers represent the peak of custom-engineered power solutions. Designed to handle severe harmonic loads, unbalanced currents, and extreme thermal overloading, these units are tailored for specialized industrial sectors such as steel fabrication, chemical electrolysis, electric railway networks, and large utility-scale solar photovoltaic (PV) generation plants.",
+      "bn": "আমাদের স্পেশাল-টাইপ ট্রান্সফরমারসমূহ কাস্টম-ইঞ্জিনিয়ার্ড পাওয়ার সলিউশনের এক অনন্য নিদর্শন। অতিরিক্ত হারমোনিক লোড, ভারসাম্যহীন বিদ্যুৎ প্রবাহ এবং তীব্র তাপীয় ওভারলোড নিয়ন্ত্রণে সক্ষম এই বিশেষ ইউনিটগুলো মূলত ধাতব গলন শিল্প (ইস্পাত কারখানা), রাসায়নিক ইলেক্ট্রোলাইসিস প্ল্যান্ট, বৈদ্যুতিক রেলওয়ে নেটওয়ার্ক এবং বৃহৎ সোলার ফোটোভোলটাইক (PV) বিদ্যুৎ প্রকল্পে ব্যবহৃত হয়।"
+    },
+    "specs": {
+      "rating": {
+        "en": "Custom (up to 30 MVA)",
+        "bn": "কাস্টম (৩০ এমভিএ পর্যন্ত)"
+      },
+      "voltage": {
+        "en": "Up to 145 kV / 245 kV",
+        "bn": "১৪৫ কেভি / ২৪৫ কেভি পর্যন্ত"
+      },
+      "standard": {
+        "en": "IEC 60076 / IEEE C57",
+        "bn": "IEC 60076 / IEEE C57"
+      }
+    }
+  },
+  {
+    "id": "dry-type-transformers",
+    "slug": "dry-type-transformers",
+    "category": "transformers",
+    "imagePath": "/images/Transformer-4-768x768.jpg",
+    "title": {
+      "en": "Dry-Type Transformers",
+      "bn": "ড্রাই-টাইপ ট্রান্সফরমার"
+    },
+    "subtitle": {
+      "en": "Cast Resin Dry-Type Transformers (100 kVA – 15 MVA)",
+      "bn": "কাস্ট রেজিন ড্রাই-টাইপ ট্রান্সফরমার (১০০ কেভিএ – ১৫ এমভিএ)"
+    },
+    "description": {
+      "en": "SEECO Transformer’s dry-type transformers ensure efficient voltage conversion for safe energy delivery in residential, industrial, and commercial areas.",
+      "bn": "দাহ্য পদার্থ মুক্ত, শব্দহীন এবং অগ্নিকাণ্ডের ঝুঁকি সম্পূর্ণ দূরকারী কাস্ট রেজিন ড্রাই-টাইপ ট্রান্সফরমার হাসপাতাল ও অফিস ভবনের জন্য নিরাপদ।"
+    },
+    "overview": {
+      "en": "Our cast resin dry-type transformers are the premier choice for indoor substations, urban skyscrapers, and environmentally sensitive projects. Because they contain no flammable oils or fluids, they eliminate fire hazards, require no containment dikes, and are virtually maintenance-free. Fully compliant with IEC 60076-11, these transformers are commonly installed in hospitals, schools, high-rise office towers, shopping malls, underground transit systems, and marine vessels.",
+      "bn": "আমাদের কাস্ট রেজিন ড্রাই-টাইপ ট্রান্সফরমারসমূহ ইনডোর সাবস্টেশন, শহুরে বহুতল ভবন এবং পরিবেশগতভাবে সংবেদনশীল প্রকল্পগুলোর জন্য একটি প্রিমিয়াম সমাধান। এতে কোনো প্রকার দাহ্য তেল বা তরল ব্যবহৃত হয় না, ফলে এটি অগ্নিকাণ্ডের ঝুঁকি সম্পূর্ণ দূর করে, কোনো তেল ধারণকারী বাঁধের প্রয়োজন হয় না এবং এটি প্রায় রক্ষণাবেক্ষণ-মুক্ত। আইইসি ৬০৭৬-১১ স্ট্যান্ডার্ড অনুসারে নির্মিত এই ট্রান্সফরমারগুলো হাসপাতাল, শিক্ষাপ্রতিষ্ঠান, শপিং মল, পাতাল রেল এবং সামুদ্রিক জাহাজে নিরাপদে বিদ্যুৎ সরবরাহে ব্যবহৃত হয়।"
+    },
+    "specs": {
+      "rating": {
+        "en": "100 kVA - 15 MVA",
+        "bn": "১০০ কেভিএ - ১৫ এমভিএ"
+      },
+      "voltage": {
+        "en": "Up to 36 kV",
+        "bn": "৩৬ কেভি পর্যন্ত"
+      },
+      "standard": {
+        "en": "IEC 60076-11 / E2-C2-F1",
+        "bn": "IEC 60076-11 / E2-C2-F1"
+      }
+    }
+  },
+  {
+    "id": "renewable-energy",
+    "slug": "renewable-energy",
+    "category": "transformers",
+    "imagePath": "/images/pad-mounted-step-up-transformer-solar-pv-site-1600.webp",
+    "title": {
+      "en": "Renewable Energy",
+      "bn": "নবায়নযোগ্য শক্তি"
+    },
+    "subtitle": {
+      "en": "Custom Substation & Step-Up Transformers for Solar PV & Wind Networks",
+      "bn": "সোলার পিভি এবং উইন্ড গ্রিড সংযোগের জন্য কাস্টম সাবস্টেশন ও স্টেপ-আপ ট্রান্সফরমার"
+    },
+    "description": {
+      "en": "Specialized power distribution systems engineered for cyclic loading, harmonic filters and high-temperature solar / wind power networks.",
+      "bn": "সৌর ও বায়ু বিদ্যুৎ উৎপাদন কেন্দ্রের উচ্চ হারমোনিক্স এবং বিশেষ লোড সাইকেল নিয়ন্ত্রণের জন্য ডিজাইনকৃত নবায়নযোগ্য শক্তি সংযোগ ট্রান্সফরমার।"
+    },
+    "overview": {
+      "en": "We provide specialized power distribution systems engineered to handle the unique cyclic loading, high harmonic distortions, and environmental demands of utility-scale solar photovoltaic (PV) parks, wind farms, and battery energy storage systems (BESS). Our product portfolio ranges from multi-winding step-up transformers (connecting multiple central inverters to one medium-voltage terminal) to compact, self-contained pad-mounted substations.",
+      "bn": "আমরা সৌর বিদ্যুৎ কেন্দ্র (PV), উইন্ড ফার্ম এবং ব্যাটারি এনার্জি স্টোরেজ সিস্টেমের (BESS) অনিয়মিত থার্মাল সাইকেল, উচ্চ হারমোনিকস এবং প্রতিকূল পরিবেশগত পরিস্থিতি বিবেচনা করে বিশেষ ধরণের বিদ্যুৎ বিতরণ ও রূপান্তর ব্যবস্থা তৈরি করি। আমাদের নবায়নযোগ্য শক্তির পণ্যের তালিকায় রয়েছে মাল্টি-উইন্ডিং স্টেপ-আপ ট্রান্সফরমার (যা একাধিক সোলার ইনভার্টারকে একটি একক মিডিয়াম-ভোল্টেজ গ্রিড লাইনে যুক্ত করে) এবং সম্পূর্ণ সুরক্ষিত কাস্টমাইজড প্যাড-মাউন্টেড আউটডোর সাবস্টেশনসমূহ।"
+    },
+    "specs": {
+      "rating": {
+        "en": "500 kVA - 10 MVA",
+        "bn": "৫০০ কেভিএ - ১০ এমভিএ"
+      },
+      "voltage": {
+        "en": "Up to 36 kV / 40.5 kV",
+        "bn": "৩৬ কেভি / ৪০.৫ কেভি পর্যন্ত"
+      },
+      "standard": {
+        "en": "IEC / IEEE C57 compliant",
+        "bn": "IEC / IEEE C57 কমপ্লায়েন্ট"
+      }
+    }
+  },
+  {
+    "id": "electric-switchgear",
+    "slug": "electric-switchgear",
+    "category": "power-dist",
+    "imagePath": "/images/switch_giar.webp",
+    "title": {
+      "en": "Electric Switchgear",
+      "bn": "বৈদ্যুতিক সুইচগিয়ার"
+    },
+    "subtitle": {
+      "en": "High & Low Voltage Switchgear Panels (HT & LT Panels)",
+      "bn": "উচ্চ ও নিম্ন ভোল্টেজ সুইচগিয়ার প্যানেল (HT ও LT প্যানেল)"
+    },
+    "description": {
+      "en": "Custom-engineered switchgear panels including HT, LT, and PFI boards, built to protect, regulate, and distribute electrical power safely.",
+      "bn": "এইচটি, এলটি এবং পিএফআই বোর্ড সহ কাস্টম-ইঞ্জিনিয়ার্ড সুইচগিয়ার প্যানেল, যা নিরাপদ বিদ্যুৎ সুরক্ষা ও বিতরণের জন্য তৈরি।"
+    },
+    "overview": {
+      "en": "Our custom-engineered switchgear solutions are designed to regulate, protect, and distribute electrical power across industrial facilities, national grids, and high-rise commercial buildings. Compliant with standard IEC 61439-1 & 2 guidelines for low voltage panels and IEC 62271-200 for medium voltage, our assemblies incorporate circuit breakers, busbars, and monitoring meters from leading manufacturers to ensure operator safety and grid stability.",
+      "bn": "আমাদের কাস্টম-ইঞ্জিনিয়ার্ড সুইচগিয়ার সমাধানসমূহ শিল্পকারখানা, জাতীয় বিদ্যুৎ গ্রিড এবং বহুতল বাণিজ্যিক ভবনে বিদ্যুৎ নিয়ন্ত্রণ, সুরক্ষা ও বিতরণের জন্য ডিজাইন করা হয়েছে। নিম্ন ভোল্টেজ প্যানেলের জন্য আইইসি ৬১৪৩৯-১ ও ২ এবং মাঝারি ভোল্টেজের জন্য আইইসি ৬২২৭১-২০০ স্ট্যান্ডার্ড মেনে তৈরি আমাদের সুইচবোর্ডগুলোতে বিশ্বের নামকরা ব্র্যান্ডের সার্কিট ব্রেকার ও বাসবার ব্যবহার করা হয়, যা সর্বোচ্চ অপারেটর নিরাপত্তা এবং গ্রিডের স্থায়িত্ব নিশ্চিত করে।"
+    },
+    "specs": {
+      "rating": {
+        "en": "Up to 6300 A",
+        "bn": "৬৩০০ এ পর্যন্ত"
+      },
+      "voltage": {
+        "en": "LV & MV (up to 33 kV)",
+        "bn": "এলভি ও এমভি (৩৩ কেভি পর্যন্ত)"
+      },
+      "standard": {
+        "en": "IEC 61439 / IEC 62271",
+        "bn": "IEC 61439 / IEC 62271"
+      }
+    }
+  },
+  {
+    "id": "lovol-diesel-generator",
+    "slug": "lovol-diesel-generator",
+    "category": "power-dist",
+    "imagePath": "/images/generator.webp",
+    "title": {
+      "en": "Lovol Diesel Generator",
+      "bn": "লোভল ডিজেল জেনারেটর"
+    },
+    "subtitle": {
+      "en": "High-Performance Lovol Diesel Generator Sets (20 – 150 kVA)",
+      "bn": "উচ্চ-ক্ষমতাসম্পন্ন লোভল ডিজেল জেনারেটর সেট (২০ – ১৫০ কেভিএ)"
+    },
+    "description": {
+      "en": "High-reliability Lovol diesel generator sets offering fuel economy, low noise, and robust backup power performance for commercial and industrial use.",
+      "bn": "শিল্প এবং বাণিজ্যিক ব্যবহারের জন্য উন্নত ব্যাকআপ পাওয়ার পারফরম্যান্স, কম শব্দ ও জ্বালানি সাশ্রয়ী লোভল ডিজেল জেনারেটর।"
+    },
+    "overview": {
+      "en": "Our Lovol diesel generator sets are engineered to deliver reliable backup and prime power for industrial facilities, commercial buildings, agricultural sites, and emergency backup sub-stations. Powered by genuine Lovol diesel engines (originally derived from Perkins technology), these generators combine low fuel consumption with exceptional load response, durability, and quiet operations.",
+      "bn": "আমাদের লোভল ডিজেল জেনারেটর সেটসমূহ শিল্পকারখানা, বাণিজ্যিক ভবন, কৃষি খামার এবং সাবস্টেশনগুলোতে নির্ভরযোগ্য ব্যাকআপ এবং প্রাইম পাওয়ার সরবরাহের জন্য তৈরি করা হয়েছে। জেনুইন লোভল ডিজেল ইঞ্জিন (যা মূলত পারকিন্স প্রযুক্তির ওপর ভিত্তি করে নির্মিত) দ্বারা চালিত এই জেনারেটরগুলো ন্যূনতম জ্বালানি খরচে সর্বোচ্চ লোড রেসপন্স, স্থায়িত্ব এবং শব্দহীন কার্যক্রম নিশ্চিত করে।"
+    },
+    "specs": {
+      "rating": {
+        "en": "20 - 150 kVA",
+        "bn": "২০ - ১৫০ কেভিএ"
+      },
+      "voltage": {
+        "en": "400V / 230V",
+        "bn": "৪০০ভি / ২৩০ভি"
+      },
+      "standard": {
+        "en": "ISO 8528 / CE Certified",
+        "bn": "ISO 8528 / CE সার্টিফাইড"
+      }
+    }
+  },
+  {
+    "id": "bbt-bus-bar-trunking",
+    "slug": "bbt-bus-bar-trunking",
+    "category": "power-dist",
+    "imagePath": "/images/BBT.png",
+    "title": {
+      "en": "BBT - Bus Bar Trunking System",
+      "bn": "বিবিটি - বাস বার ট্রাংকিং সিস্টেম"
+    },
+    "subtitle": {
+      "en": "High-Conductivity Compact Busbar Trunking Systems (100 A – 6300 A)",
+      "bn": "উচ্চ-পরিবাহিতা সম্পন্ন কম্প্যাক্ট বাসবার ট্রাংকিং সিস্টেম (১০০ এ – ৬৩০০ এ)"
+    },
+    "description": {
+      "en": "Compact, sandwich-type busbar trunking systems offering a space-saving and low-voltage-drop alternative to traditional power cables.",
+      "bn": "কম্প্যাক্ট, স্যান্ডউইচ টাইপ বাসবার ট্রাংকিং সিস্টেম যা প্রথাগত পাওয়ার ক্যাবলের তুলনায় জায়গা সাশ্রয়ী এবং কম ভোল্টেজ ড্রপ নিশ্চিত করে।"
+    },
+    "overview": {
+      "en": "Our busbar trunking systems (BBT) represent the modern, efficient, and flexible alternative to traditional electrical power cabling. Fabricated from compact, sandwich-type copper or aluminum bars housed in rigid galvanized steel or aluminum enclosures, our BBT systems offer extremely low voltage drops, high short-circuit capacity, and simple plug-in tap-off configurations, making them ideal for high-rise buildings, industrial factories, and high-density data centers.",
+      "bn": "আমাদের বাসবার ট্রাংকিং সিস্টেমসমূহ (BBT) প্রথাগত ভারী বৈদ্যুতিক ক্যাবলিংয়ের একটি আধুনিক, দক্ষ এবং নমনীয় বিকল্প। কম্প্যাক্ট স্যান্ডউইচ টাইপের তামা বা অ্যালুমিনিয়াম বার এবং মজবুত গ্যালভানাইজড স্টিল অথবা অ্যালুমিনিয়াম এনক্লোজারে আবৃত এই বিবিটি সিস্টেম অত্যন্ত কম ভোল্টেজ ড্রপ, উচ্চ শর্ট-সার্কিট সহনশীলতা এবং সহজ প্লাগ-ইন সংযোগ সুবিধা প্রদান করে, যা বহুতল ভবন, শিল্প কারখানা এবং ডাটা সেন্টারগুলোতে বিদ্যুৎ বিতরণের জন্য উপযুক্ত।"
+    },
+    "specs": {
+      "rating": {
+        "en": "100 A - 6300 A",
+        "bn": "১০০ এ - ৬৩০০ এ"
+      },
+      "voltage": {
+        "en": "Up to 1000 V",
+        "bn": "১০০০ ভি পর্যন্ত"
+      },
+      "standard": {
+        "en": "IEC 61439-6 Compliant",
+        "bn": "IEC 61439-6 কমপ্লায়েন্ট"
+      }
+    }
+  }
+]

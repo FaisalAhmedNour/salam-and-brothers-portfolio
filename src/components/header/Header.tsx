@@ -23,7 +23,7 @@ const HEADER_NAVIGATION_ITEMS: NavigationLinkItem[] = [
   { labelKey: "nav.aboutUs", href: "/about" },
   {
     labelKey: "nav.products",
-    href: "#products",
+    href: "/products",
     hasDropdown: true,
     dropdownItems: [
       { labelKey: "nav.distributionTransformers", href: "/products/distribution-transformers" },

@@ -150,7 +150,7 @@ export default function AboutUsPage() {
             <div className="lg:col-span-5 relative aspect-square w-full overflow-hidden bg-white border border-neutral-200 shadow-md rounded-2xl p-2 group hover:shadow-lg transition-shadow duration-300">
               <div className="relative w-full h-full overflow-hidden rounded-xl bg-neutral-100">
                 <Image
-                  src="/images/seecopower-Transformer-Team.jpeg"
+                  src="/images/Transformers-Be-Maintained.png"
                   alt="SEECO Substation Assembly and Engineering Team"
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
