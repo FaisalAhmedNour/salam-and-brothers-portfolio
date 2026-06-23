@@ -152,7 +152,7 @@ export default function BlogListingPage() {
                     {/* Visual post banner */}
                     <div className="absolute inset-0 bg-brand-red/10 group-hover:bg-brand-red/0 transition-all duration-300 z-10" />
                     {/* We can use standard colored gradients as backgrounds for visual assets since no real files exist */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-neutral-900/60 to-transparent z-10" />
+                    <div className="absolute inset-0 bg-linear-to-tr from-neutral-900/60 to-transparent z-10" />
                   </div>
                   <div className="p-8 md:p-12 lg:col-span-5 flex flex-col justify-between space-y-5">
                     <div className="space-y-4">

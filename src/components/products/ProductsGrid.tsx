@@ -21,28 +21,28 @@ const PRODUCTS_LIST_DATA: ProductCardItem[] = [
     titleKey: "productsGrid.distributionTitle",
     descriptionKey: "productsGrid.distributionDesc",
     imagePath: "/images/power-transformer.png",
-    linkHref: "#products-distribution",
+    linkHref: "/products/distribution-transformers",
   },
   {
     id: "products-power",
     titleKey: "productsGrid.powerTitle",
     descriptionKey: "productsGrid.powerDesc",
     imagePath: "/images/Distribution-Transformers-1.png",
-    linkHref: "#products-power",
+    linkHref: "/products/power-transformers",
   },
   {
     id: "products-special",
     titleKey: "productsGrid.specialTitle",
     descriptionKey: "productsGrid.specialDesc",
     imagePath: "/images/special-type.png",
-    linkHref: "#products-special",
+    linkHref: "/products/special-type-transformers",
   },
   {
     id: "products-dry",
     titleKey: "productsGrid.dryTitle",
     descriptionKey: "productsGrid.dryDesc",
     imagePath: "/images/Transformer-4-768x768.jpg",
-    linkHref: "#products-dry",
+    linkHref: "/products/dry-type-transformers",
   },
 ];
 

@@ -146,10 +146,14 @@ export default function Footer() {
                 {t("footer.productsHeader")}
               </h4>
               <ul className="space-y-3.5 text-[15px] font-medium text-neutral-600">
-                <li className="underline font-semibold"><a href={getHref("#products-distribution")} className="hover:text-brand-red transition-colors">{t("nav.distributionTransformers")}</a></li>
-                <li className="underline font-semibold"><a href={getHref("#products-power")} className="hover:text-brand-red transition-colors">{t("nav.powerTransformers")}</a></li>
-                <li className="underline font-semibold"><a href={getHref("#products-special")} className="hover:text-brand-red transition-colors">{t("nav.specialTypeTransformers")}</a></li>
-                <li className="underline font-semibold"><a href={getHref("#products-dry")} className="hover:text-brand-red transition-colors">{t("nav.dryTypeTransformers")}</a></li>
+                <li className="underline font-semibold"><a href="/products/distribution-transformers" className="hover:text-brand-red transition-colors">{t("nav.distributionTransformers")}</a></li>
+                <li className="underline font-semibold"><a href="/products/power-transformers" className="hover:text-brand-red transition-colors">{t("nav.powerTransformers")}</a></li>
+                <li className="underline font-semibold"><a href="/products/special-type-transformers" className="hover:text-brand-red transition-colors">{t("nav.specialTypeTransformers")}</a></li>
+                <li className="underline font-semibold"><a href="/products/dry-type-transformers" className="hover:text-brand-red transition-colors">{t("nav.dryTypeTransformers")}</a></li>
+                <li className="underline font-semibold"><a href="/products/lovol-diesel-generator" className="hover:text-brand-red transition-colors">{t("nav.lovolDiselGenerator")}</a></li>
+                <li className="underline font-semibold"><a href="/products/electric-switchgear" className="hover:text-brand-red transition-colors">{t("nav.electricSwitchgear")}</a></li>
+                <li className="underline font-semibold"><a href="/products/bbt-bus-bar-trunking" className="hover:text-brand-red transition-colors">{t("nav.bbtBusBarTrunkingSystem")}</a></li>
+                <li className="underline font-semibold"><a href="/products/renewable-energy" className="hover:text-brand-red transition-colors">{t("nav.renewableEnergy")}</a></li>
               </ul>
             </div>
 

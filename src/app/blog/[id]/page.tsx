@@ -177,7 +177,7 @@ export default function BlogPostDetailPage({
           </h1>
 
           {/* Simulated Banner Image Card */}
-          <div className="relative h-60 md:h-[400px] w-full bg-neutral-800 rounded-2xl flex items-center justify-center text-white/5 font-black text-[28px] uppercase tracking-widest select-none overflow-hidden border border-neutral-100">
+          <div className="relative h-60 md:h-100 w-full bg-neutral-800 rounded-2xl flex items-center justify-center text-white/5 font-black text-[28px] uppercase tracking-widest select-none overflow-hidden border border-neutral-100">
             SEECO Technical Article
             <div className="absolute inset-0 bg-brand-red/5 z-10 pointer-events-none" />
           </div>
