@@ -73,7 +73,7 @@ export default function Hero() {
       </div>
 
       {/* Dark tint overlay for reading contrast */}
-      <div className="absolute inset-0 z-10 bg-black/45" />
+      <div className="absolute inset-0 z-10 bg-black/25" />
 
       {/* Content layout wrapper */}
       <div className="relative z-20 flex h-full items-center px-6 md:px-12">

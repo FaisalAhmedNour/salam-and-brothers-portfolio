@@ -39,7 +39,7 @@ export default function BrandBanner() {
           <div className="flex flex-col justify-center py-4">
 
             {/* Title Statement */}
-            <span className="font-kanit text-[20px] font-bold text-gray-400 uppercase tracking-widest leading-none">
+            <span className="font-kanit text-[32px] font-bold text-gray-400 uppercase tracking-widest leading-none">
               {t("brandBanner.rightLabel")}
             </span>
 

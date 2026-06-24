@@ -33,7 +33,7 @@ export default function MarqueeBand() {
   return (
     <section
       id="marquee-band"
-      className="relative min-h-125 w-full overflow-hidden bg-neutral-900 font-arone"
+      className="relative min-h-125 w-full overflow-hidden bg-neutral-200 font-arone"
     >
 
       {/* Background Video Element with Fallback Poster Image */}
@@ -42,7 +42,7 @@ export default function MarqueeBand() {
         muted
         loop
         playsInline
-        className="absolute inset-0 z-0 h-full w-full object-cover opacity-95"
+        className="absolute inset-0 z-0 h-full w-full object-cover opacity-100"
       >
         <source
           src="/images/Transformer-1900-x-600-px.mp4"
@@ -53,7 +53,7 @@ export default function MarqueeBand() {
       </video>
 
       {/* Dark semi-transparent overlay to ensure content contrast */}
-      <div className="absolute inset-0 z-10 bg-[#2e2d2d00]" />
+      {/* <div className="absolute inset-0 z-10" /> */}
 
       {/* Split layout grid wrapper */}
       <div className="relative z-20 mx-auto grid max-w-310 grid-cols-1 md:grid-cols-2 md:min-h-125">
@@ -87,7 +87,7 @@ export default function MarqueeBand() {
                       <span className="text-[25px] leading-tight shrink-0">•</span>
                       <div className="flex flex-col text-left">
                         <span className="leading-tight">{item.en}</span>
-                        <span className="text-[13px] text-gray-100 normal-case mt-1 font-normal font-sans">
+                        <span className="text-[16px] text-gray-100 normal-case mt-1 font-normal font-sans">
                           {item.bn}
                         </span>
                       </div>
@@ -103,7 +103,7 @@ export default function MarqueeBand() {
                       <span className="text-[25px] leading-tight shrink-0">•</span>
                       <div className="flex flex-col text-left">
                         <span className="leading-tight">{item.en}</span>
-                        <span className="text-[13px] text-gray-100 normal-case mt-1 font-bold font-sans">
+                        <span className="text-[16px] text-gray-100 normal-case mt-1 font-bold font-sans">
                           {item.bn}
                         </span>
                       </div>
