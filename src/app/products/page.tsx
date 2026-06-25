@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import PageHeader from "@/components/widgets/PageHeader";
-import productsData from "@/data/products.json";
+import staticProducts from "@/data/products.json";
 
 // Type contracts matching the structured products.json data representation
 interface ProductTitle {
@@ -96,10 +96,33 @@ export default function ProductsPage() {
   const activeLang = (language === "bn" ? "bn" : "en") as "en" | "bn";
   const t = PRODUCTS_TRANSLATIONS[activeLang];
 
+  // Dynamic products list loaded from DB or fallback
+  const [productsList, setProductsList] = useState<ProductItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        const res = await fetch("/api/public/products");
+        if (res.ok) {
+          const data = await res.json();
+          setProductsList(data);
+        } else {
+          setProductsList(staticProducts as ProductItem[]);
+        }
+      } catch (err) {
+        setProductsList(staticProducts as ProductItem[]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProducts();
+  }, []);
+
   // State to filter active product groups
   const [activeCategory, setActiveCategory] = useState<string>("all");
 
-  const typedProductsData = productsData as ProductItem[];
+  const typedProductsData = productsList;
 
   // Filter products lists dynamically
   const filteredProducts = activeCategory === "all"
@@ -280,7 +303,7 @@ export default function ProductsPage() {
               <div className="pt-2">
                 <Link
                   href="/contact?inquiry=general"
-                  className="inline-flex items-center gap-3 bg-brand-red hover:bg-red-600 text-white px-8 py-4.5 text-base font-bold rounded-lg transition-all shadow-md shadow-red-500/10 cursor-pointer group"
+                  className="inline-flex items-center gap-3 bg-brand-red hover:bg-brand-red-hover text-white px-8 py-4.5 text-base font-bold rounded-lg transition-all shadow-md shadow-red-500/10 cursor-pointer group"
                 >
                   <span>{t.ctaBtn}</span>
                   <span className="transition-transform duration-200 group-hover:translate-x-1">

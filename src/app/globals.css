@@ -5,13 +5,58 @@
   --font-kanit: var(--font-kanit), sans-serif;
   --font-montserrat: var(--font-montserrat), sans-serif;
 
-  --color-brand-red: #dc2626;
-  --color-brand-red-hover: #ff0000;
+  --color-brand-red: var(--primary-color);
+  --color-brand-red-hover: var(--primary-color-hover);
+
+  --color-dash-bg: var(--dash-bg);
+  --color-dash-card-bg: var(--dash-card-bg);
+  --color-dash-text: var(--dash-text);
+  --color-dash-text-muted: var(--dash-text-muted);
+  --color-dash-border: var(--dash-border);
+  --color-dash-sidebar-bg: var(--dash-sidebar-bg);
+  --color-dash-header-bg: var(--dash-header-bg);
+  --color-dash-input-bg: var(--dash-input-bg);
+  --color-dash-hover-bg: var(--dash-hover-bg);
 }
 
 :root {
+  --primary-color: #dc2626;
+  --primary-color-hover: #b91c1c;
   --background: #ffffff;
-  --foreground: #111827;
+  --foreground: #0f172a;
+
+  /* Theme variables - Light Mode (Premium Slate/Zinc theme) */
+  --dash-bg: #f8fafc;
+  /* Soft Slate-50 background for clean contrast */
+  --dash-card-bg: #ffffff;
+  /* Pure white cards */
+  --dash-text: #0f172a;
+  /* Slate-900 high-contrast text */
+  --dash-text-muted: #64748b;
+  /* Slate-500 muted text */
+  --dash-border: #e2e8f0;
+  /* Slate-200 border for clean outlines */
+  --dash-sidebar-bg: #ffffff;
+  /* Pure white sidebar */
+  --dash-header-bg: #ffffff;
+  /* Pure white header */
+  --dash-input-bg: #f8fafc;
+  /* Slate-50 input background */
+  --dash-hover-bg: #f1f5f9;
+  /* Slate-100 hover indicator background */
+}
+
+.dark {
+  /* Theme variables - Dark Mode (Premium Charcoal/Indigo-Gray theme) */
+  --dash-bg: #090d16;
+  --dash-card-bg: #111827;
+  --dash-text: #f8fafc;
+  --dash-text-muted: #94a3b8;
+  --dash-border: #1f2937;
+  --dash-sidebar-bg: #111827;
+  --dash-header-bg: #111827;
+  --dash-input-bg: #1f2937;
+  --dash-hover-bg: #1f2937;
 }
 
 * {
@@ -139,7 +184,7 @@ button {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: rgba(220, 30, 30, 0.2);
+  background: color-mix(in srgb, var(--primary-color) 20%, transparent);
   animation: erPulse 3.2s ease-out infinite;
 }
 
@@ -154,12 +199,12 @@ button {
 .er-dot {
   width: 9px;
   height: 9px;
-  background: #dc1e1e;
+  background: var(--primary-color);
   border-radius: 50%;
   border: 2px solid #fff;
   position: relative;
   z-index: 2;
-  box-shadow: 0 0 7px rgba(220, 30, 30, 0.9);
+  box-shadow: 0 0 7px color-mix(in srgb, var(--primary-color) 90%, transparent);
   transition: transform .2s;
 }
 
@@ -174,13 +219,13 @@ button {
   left: 50%;
   transform: translateX(-50%);
   background: rgba(0, 0, 0, 0.88);
-  color: #dc1e1e;
+  color: var(--primary-color);
   font-size: 11px;
   font-weight: 600;
   white-space: nowrap;
   padding: 4px 10px;
   border-radius: 5px;
-  border: 1px solid rgba(220, 30, 30, 0.4);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 40%, transparent);
   pointer-events: none;
   opacity: 0;
   transition: opacity .2s;
@@ -204,7 +249,7 @@ button {
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: rgba(220, 30, 30, 0.15);
+  background: color-mix(in srgb, var(--primary-color) 15%, transparent);
   animation: erTurkeyPulse 2.8s ease-out infinite;
 }
 
@@ -229,12 +274,12 @@ button {
 .er-turkey-core {
   width: 14px;
   height: 14px;
-  background: #dc1e1e;
+  background: var(--primary-color);
   border-radius: 50%;
   border: 3px solid #fff;
   position: relative;
   z-index: 2;
-  box-shadow: 0 0 14px rgba(220, 30, 30, 1), 0 0 28px rgba(220, 30, 30, 0.5);
+  box-shadow: 0 0 14px var(--primary-color), 0 0 28px color-mix(in srgb, var(--primary-color) 50%, transparent);
   animation: erTurkeyGlow 2.8s ease-in-out infinite;
 }
 
@@ -243,7 +288,7 @@ button {
   bottom: 22px;
   left: 50%;
   transform: translateX(-50%);
-  background: #dc1e1e;
+  background: var(--primary-color);
   color: #fff;
   font-size: 10px;
   font-weight: 700;
@@ -251,7 +296,7 @@ button {
   padding: 3px 9px;
   border-radius: 20px;
   letter-spacing: .08em;
-  box-shadow: 0 2px 8px rgba(220, 30, 30, 0.5);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary-color) 50%, transparent);
 }
 
 @keyframes erTurkeyPulse {
@@ -274,11 +319,11 @@ button {
 
   0%,
   100% {
-    box-shadow: 0 0 10px rgba(220, 30, 30, 0.9), 0 0 20px rgba(220, 30, 30, 0.4);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--primary-color) 90%, transparent), 0 0 20px color-mix(in srgb, var(--primary-color) 40%, transparent);
   }
 
   50% {
-    box-shadow: 0 0 20px rgba(220, 30, 30, 1), 0 0 40px rgba(220, 30, 30, 0.7);
+    box-shadow: 0 0 20px var(--primary-color), 0 0 40px color-mix(in srgb, var(--primary-color) 70%, transparent);
   }
 }
 
@@ -309,4 +354,21 @@ button {
     opacity: 1;
     transform: translate(-50%, -50%);
   }
+}
+
+/* Custom animation for Hero text transition */
+@keyframes heroTextSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-text {
+  animation: heroTextSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

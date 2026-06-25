@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { executeQuery } from "@/lib/db";
 
 /**
  * Handles POST requests to /api/contact.
@@ -23,6 +24,17 @@ export async function POST(request: Request) {
         { error: "All fields are required." },
         { status: 400 }
       );
+    }
+
+    // Save submission to database if configured
+    try {
+      await executeQuery(
+        "INSERT INTO inquiries (name, email, mobile, subject, message) VALUES (?, ?, ?, ?, ?)",
+        [name, email, mobile || null, finalSubject, message]
+      );
+      console.log("Contact submission logged to MySQL database.");
+    } catch (dbErr) {
+      console.error("Failed to log contact submission to MySQL database:", dbErr);
     }
 
     // Email format validation: verify address structure conforms to standard patterns.

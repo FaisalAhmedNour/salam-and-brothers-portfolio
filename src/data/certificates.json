@@ -1,0 +1,57 @@
+[
+  {
+    "id": "iso-9001",
+    "titleEn": "ISO 9001:2015 Certification",
+    "titleBn": "ISO 9001:2015 সার্টিফিকেশন",
+    "authorityEn": "International Quality Standards",
+    "authorityBn": "আন্তর্জাতিক কোয়ালিটি স্ট্যান্ডার্ড",
+    "descEn": "Quality Management System certification for the design, manufacturing, and after-sales servicing of all heavy electrical transformers.",
+    "descBn": "ভারী বৈদ্যুতিক ট্রান্সফরমারসমূহের ডিজাইন, উৎপাদন এবং বিক্রয়োত্তর সেবা প্রদানের জন্য কোয়ালিটি ম্যানেজমেন্ট সিস্টেমের আন্তর্জাতিক সার্টিফিকেশন।",
+    "image": "",
+    "orderIndex": 0
+  },
+  {
+    "id": "bsti-approval",
+    "titleEn": "BSTI Approval",
+    "titleBn": "বিএসটিআই (BSTI) অনুমোদন",
+    "authorityEn": "Bangladesh Standards and Testing Institution",
+    "authorityBn": "বাংলাদেশ স্ট্যান্ডার্ডস অ্যান্ড টেস্টিং ইনস্টিটিউশন",
+    "descEn": "Formally certified and licensed for commercial manufacturing and compliance under BSTI national guidelines.",
+    "descBn": "জাতীয় ইউটিলিটি গাইডলাইন অনুযায়ী বাণিজ্যিকভাবে উৎপাদন ও মান নিয়ন্ত্রণের জন্য আনুষ্ঠানিকভাবে বিএসটিআই দ্বারা সার্টিফাইড ও অনুমোদিত।",
+    "image": "/uploads/whatsapp-image-2026-06-24-at-12-40-40-pm-1782391886944.jpeg",
+    "orderIndex": 1
+  },
+  {
+    "id": "buet-testing",
+    "titleEn": "BUET Testing and Verification",
+    "titleBn": "বুয়েট (BUET) পরীক্ষিত ও অনুমোদিত",
+    "authorityEn": "Bangladesh University of Engineering and Technology",
+    "authorityBn": "বাংলাদেশ প্রকৌশল বিশ্ববিদ্যালয়",
+    "descEn": "Type-tested, temperature-rise tested, and impulse-tested by BUET labs to guarantee absolute performance under extreme grid stress.",
+    "descBn": "গ্রিডের চরম লোডের মধ্যেও নিখুঁত পারফরম্যান্স নিশ্চিত করতে বুয়েটের ল্যাব দ্বারা টাইপ-টেস্ট, টেম্পারেচার রাইজ এবং ইমপালস পরীক্ষা দ্বারা যাচাইকৃত।",
+    "image": "",
+    "orderIndex": 2
+  },
+  {
+    "id": "cei-approval",
+    "titleEn": "CEI Office Approval",
+    "titleBn": "প্রধান বিদ্যুৎ পরিদর্শক (CEI) কার্যালয়ের অনুমোদন",
+    "authorityEn": "Office of the Chief Electrical Inspector",
+    "authorityBn": "প্রধান বিদ্যুৎ পরিদর্শক কার্যালয়",
+    "descEn": "Fully approved and licensed design specifications for safe substation, generator, and switchgear operation.",
+    "descBn": "সাবস্টেশন, জেনারেটর এবং switchgear-এর নিরাপদ অপারেশনের জন্য অনুমোদিত এবং ডিজাইন স্পেসিফিকেশন লাইসেন্সপ্রাপ্ত।",
+    "image": "",
+    "orderIndex": 3
+  },
+  {
+    "id": "iec-ieee-compliance",
+    "titleEn": "IEC & IEEE Compliance",
+    "titleBn": "আইইসি (IEC) এবং আইইইই (IEEE) স্ট্যান্ডার্ড",
+    "authorityEn": "International Electrotechnical Commission",
+    "authorityBn": "আন্তর্জাতিক ইলেকট্রোটেকনিক্যাল কমিশন",
+    "descEn": "Every electrical equipment design complies with international standards including IEC 60076 and IEEE C57 series.",
+    "descBn": "আমাদের প্রতিটি বৈদ্যুতিক যন্ত্রপাতির ডিজাইন আইইসি ৬০৭৬ (IEC 60076) এবং আইইইই সি৫৭ (IEEE C57) আন্তর্জাতিক মানদণ্ড অনুসরণ করে।",
+    "image": "",
+    "orderIndex": 4
+  }
+]

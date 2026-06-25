@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import PageHeader from "@/components/widgets/PageHeader";
-import { BLOG_POSTS, BlogPost } from "@/data/blogData";
+import { BLOG_POSTS as staticBlogs, BlogPost } from "@/data/blogData";
 
 // Local translations config for Blog listing items
 const TRANSLATIONS = {
@@ -49,12 +49,35 @@ export default function BlogListingPage() {
   const activeLang = (language === "bn" ? "bn" : "en") as "en" | "bn";
   const text = TRANSLATIONS[activeLang];
 
+  // Dynamic blogs list loaded from DB or fallback
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadBlogs() {
+      try {
+        const res = await fetch("/api/public/blogs");
+        if (res.ok) {
+          const data = await res.json();
+          setPosts(data);
+        } else {
+          setPosts(staticBlogs);
+        }
+      } catch (err) {
+        setPosts(staticBlogs);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadBlogs();
+  }, []);
+
   // Filtering states
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // Filter posts based on category and search query
-  const filteredPosts = BLOG_POSTS.filter((post) => {
+  const filteredPosts = posts.filter((post) => {
     const title = activeLang === "bn" ? post.titleBn : post.titleEn;
     const excerpt = activeLang === "bn" ? post.excerptBn : post.excerptEn;
     const matchesSearch =
@@ -182,7 +205,7 @@ export default function BlogListingPage() {
                       </div>
                       <Link
                         href={`/blog/${featuredPost.id}`}
-                        className="inline-flex items-center gap-1.5 bg-brand-red hover:bg-red-600 text-white px-4.5 py-2.5 text-[13px] font-bold rounded-lg transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1.5 bg-brand-red hover:bg-brand-red-hover text-white px-4.5 py-2.5 text-[13px] font-bold rounded-lg transition-colors cursor-pointer"
                       >
                         <span>{text.readMore}</span>
                         <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="h-4 w-4">

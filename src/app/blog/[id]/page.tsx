@@ -1,10 +1,10 @@
 "use client";
 
-import { use } from "react";
+import { use, useState, useEffect } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import PageHeader from "@/components/widgets/PageHeader";
-import { BLOG_POSTS } from "@/data/blogData";
+import { BLOG_POSTS as staticBlogs, BlogPost } from "@/data/blogData";
 
 // Local translations config for Blog detail items
 const TRANSLATIONS = {
@@ -45,8 +45,29 @@ export default function BlogPostDetailPage({
   const activeLang = (language === "bn" ? "bn" : "en") as "en" | "bn";
   const text = TRANSLATIONS[activeLang];
 
-  // Retrieve the target blog post from the local database
-  const post = BLOG_POSTS.find((p) => p.id === id);
+  // Dynamic post load states
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadPost() {
+      try {
+        const res = await fetch("/api/public/blogs");
+        if (res.ok) {
+          const data = await res.json();
+          const match = data.find((p: any) => p.id === id);
+          setPost(match || null);
+        } else {
+          setPost(staticBlogs.find((p) => p.id === id) || null);
+        }
+      } catch (err) {
+        setPost(staticBlogs.find((p) => p.id === id) || null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadPost();
+  }, [id]);
 
   /**
    * Helper to format publish dates to local format.
@@ -58,54 +79,108 @@ export default function BlogPostDetailPage({
     return dateStr.replace(/[0-9]/g, (digit) => banglaDigits[parseInt(digit)]);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FAF9F5] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-brand-red border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  /**
+   * Helper to parse and render inline bold segments formatted as **text**.
+   */
+  const renderInlineFormat = (text: string) => {
+    if (!text.includes("**")) {
+      return text;
+    }
+    const parts = text.split("**");
+    return parts.map((part, index) => {
+      // Alternating parts: odd indices are text wrapped in **
+      if (index % 2 === 1) {
+        return <strong key={index} className="font-extrabold text-neutral-900">{part}</strong>;
+      }
+      return part;
+    });
+  };
+
   /**
    * Render helper to parse markdown-like structures into semantic React nodes.
    * Parses:
    *  - "### Subheading" -> <h3>
-   *  - "* Item" -> <ul> list
+   *  - "* Item" / "- Item" / "• Item" -> <ul> list
    *  - "1. Item" -> <ol> list
-   *  - Paragraphs -> <p>
+   *  - Paragraphs -> <p> with inline formatting
    */
   const renderArticleBody = (content: string) => {
-    // Split the content into paragraph blocks by double newlines
+    // Split content into paragraph/list blocks by double newlines
     const blocks = content.split("\n\n");
 
     return blocks.map((block, index) => {
       const trimmedBlock = block.trim();
       if (!trimmedBlock) return null;
 
-      // Handle internal newlines in the block (e.g. lists or single breaks)
+      // Case 1: Subheading
+      if (trimmedBlock.startsWith("### ")) {
+        const headingText = trimmedBlock.replace(/^###\s+/, "");
+        return (
+          <h3 
+            key={index} 
+            className="font-kanit text-[18px] md:text-[21px] font-bold text-neutral-900 mt-8 mb-4 first:mt-0"
+          >
+            {renderInlineFormat(headingText)}
+          </h3>
+        );
+      }
+
+      // Case 2: Numbered List Block
+      if (/^\d+\.\s+/.test(trimmedBlock)) {
+        const lines = trimmedBlock.split("\n");
+        return (
+          <ol key={index} className="list-decimal pl-6 my-4 space-y-2 text-[14.5px] md:text-[15px] text-neutral-700 font-medium leading-relaxed">
+            {lines.map((line, idx) => {
+              const itemText = line.replace(/^\d+\.\s+/, "");
+              return (
+                <li key={idx}>
+                  {renderInlineFormat(itemText)}
+                </li>
+              );
+            })}
+          </ol>
+        );
+      }
+
+      // Case 3: Bullet List Block (starts with * or - or •)
+      if (trimmedBlock.startsWith("* ") || trimmedBlock.startsWith("- ") || trimmedBlock.startsWith("• ")) {
+        const lines = trimmedBlock.split("\n");
+        return (
+          <ul key={index} className="list-disc pl-6 my-4 space-y-2 text-[14.5px] md:text-[15px] text-neutral-700 font-medium leading-relaxed">
+            {lines.map((line, idx) => {
+              const itemText = line.replace(/^[\*\-•]\s+/, "");
+              return (
+                <li key={idx}>
+                  {renderInlineFormat(itemText)}
+                </li>
+              );
+            })}
+          </ul>
+        );
+      }
+
+      // Case 4: Standard Paragraph
       const lines = trimmedBlock.split("\n");
-
       return (
-        <div key={index} className="mb-5">
-          {lines.map((line, idx) => {
-            let lineText = line.trim();
-            if (!lineText) return null;
-
-            // Remove markdown heading markers if present
-            if (lineText.startsWith("### ")) {
-              lineText = lineText.replace("### ", "");
-            }
-
-            // Replace asterisks list items with clean bullet symbol
-            if (lineText.startsWith("* ")) {
-              lineText = "• " + lineText.replace("* ", "");
-            }
-
-            // Remove markdown bold delimiters so they don't print as text
-            lineText = lineText.replace(/\*\*/g, "");
-
-            return (
-              <p
-                key={idx}
-                className="text-[14px] md:text-[15px] leading-relaxed text-neutral-700 font-medium text-justify mt-1.5 first:mt-0"
-              >
-                {lineText}
-              </p>
-            );
-          })}
-        </div>
+        <p 
+          key={index} 
+          className="text-[14.5px] md:text-[15.5px] leading-relaxed text-neutral-700 font-medium text-justify mb-5 last:mb-0"
+        >
+          {lines.map((line, idx) => (
+            <span key={idx}>
+              {idx > 0 && <br />}
+              {renderInlineFormat(line)}
+            </span>
+          ))}
+        </p>
       );
     });
   };
@@ -124,7 +199,7 @@ export default function BlogPostDetailPage({
             <p className="text-[14px] text-neutral-500 mb-6">{text.notFoundDesc}</p>
             <Link
               href="/blog"
-              className="inline-flex w-full items-center justify-center bg-brand-red hover:bg-red-600 text-white py-3 rounded-lg font-bold shadow-md transition-colors cursor-pointer"
+              className="inline-flex w-full items-center justify-center bg-brand-red hover:bg-brand-red-hover text-white py-3 rounded-lg font-bold shadow-md transition-colors cursor-pointer"
             >
               {text.goBack}
             </Link>

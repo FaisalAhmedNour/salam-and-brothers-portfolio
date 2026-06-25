@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import PageHeader from "@/components/widgets/PageHeader";
+import staticNotices from "@/data/notices.json";
 
 /**
  * Interface representing a notice attachment file.
@@ -32,97 +33,6 @@ interface Notice {
   designationEn: string;
   designationBn: string;
 }
-
-// Complete mock dataset for Seeco Power Limited Notices
-const NOTICES_DATA: Notice[] = [
-  {
-    id: "N-2026-001",
-    refNo: "SPL/HO/TND/2026/049",
-    publishDate: "2026-06-20",
-    category: "tender",
-    titleEn: "Tender Notice: Procurement of Super Enameled Copper Wire for Transformer Winding",
-    titleBn: "দরপত্র বিজ্ঞপ্তি: ট্রান্সফরমার উইন্ডিংয়ের জন্য সুপার এনামেলড তামার তার সংগ্রহ",
-    contentEn: "Sealed tenders are invited from reputable manufacturers/suppliers for the supply of high-grade Super Enameled Copper Wire. The technical specifications and quantity details are outlined in the attached tender schedule documents. Bid submission deadline is July 15, 2026.",
-    contentBn: "উচ্চ মানের সুপার এনামেলড তামার তার সরবরাহের জন্য নামী নির্মাতা/সরবরাহকারীদের কাছ থেকে সিলমোহরযুক্ত দরপত্র আহ্বান করা হচ্ছে। প্রযুক্তিগত বিবরণ এবং পরিমাণের বিশদ বিবরণ সংযুক্ত দরপত্র তফসিলে উল্লেখ করা হয়েছে। দরপত্র জমা দেওয়ার শেষ তারিখ ১৫ জুলাই, ২০২৬।",
-    files: [
-      { nameEn: "Tender Specifications Schedule.pdf", nameBn: "দরপত্র স্পেসিফিকেশন তফসিল.pdf", url: "/docs/tender-copper-spec.pdf", size: "1.4 MB" },
-      { nameEn: "Tender Terms and Conditions.pdf", nameBn: "দরপত্র শর্তাবলী ফরম.pdf", url: "/docs/terms-conditions.pdf", size: "840 KB" }
-    ],
-    signatoryEn: "Engr. Monirul Islam",
-    signatoryBn: "ইঞ্জি. মনিরুল ইসলাম",
-    designationEn: "Head of Procurement Division, SPL",
-    designationBn: "প্রধান, ক্রয় বিভাগ, এসপিএল"
-  },
-  {
-    id: "N-2026-002",
-    refNo: "SPL/HO/HR/REC/2026/088",
-    publishDate: "2026-06-18",
-    category: "recruitment",
-    titleEn: "Recruitment Notice: Job Vacancy for Assistant Electrical Design Engineer",
-    titleBn: "নিয়োগ বিজ্ঞপ্তি: সহকারী বৈদ্যুতিক ডিজাইন প্রকৌশলী পদের শূন্যতা",
-    contentEn: "We are seeking a talented Assistant Electrical Design Engineer with experience in transformer design (Core, Coil, and Tank layout). Interested candidates must apply through our website or send their CV to careers@seecopowerlimited.com by July 10, 2026.",
-    contentBn: "আমরা ট্রান্সফরমার ডিজাইন (কোর, কয়েল এবং ট্যাংক লেআউট) এ অভিজ্ঞ একজন প্রতিভাবান সহকারী বৈদ্যুতিক ডিজাইন প্রকৌশলী খুঁজছি। আগ্রহী প্রার্থীদের আমাদের ওয়েবসাইটের মাধ্যমে আবেদন করতে হবে অথবা ১০ জুলাই, ২০২৬ এর মধ্যে careers@seecopowerlimited.com এ সিভি পাঠাতে হবে।",
-    files: [
-      { nameEn: "Job Description & Requirements.pdf", nameBn: "কাজের বিবরণ এবং যোগ্যতা.pdf", url: "/docs/job-assistant-engineer.pdf", size: "1.1 MB" }
-    ],
-    signatoryEn: "Fariha Tabassum",
-    signatoryBn: "ফারিহা তাবাসসুম",
-    designationEn: "Manager, Human Resource Department",
-    designationBn: "ব্যবস্থাপক, মানব সম্পদ বিভাগ"
-  },
-  {
-    id: "N-2026-003",
-    refNo: "SPL/FAC/GEN/2026/102",
-    publishDate: "2026-06-15",
-    category: "general",
-    titleEn: "General Notice: Factory Operational Schedule Update for Eid-ul-Adha Holidays",
-    titleBn: "সাধারণ নোটিশ: ঈদুল আজহার ছুটির জন্য কারখানা পরিচালনার সময়সূচী আপডেট",
-    contentEn: "All departments of the Seeco Power Limited Factory will remain closed from June 26 to June 30, 2026, in observance of the holy Eid-ul-Adha. Limited security and plant maintenance personnel will remain on duty as per shifts. Normal factory operations will resume on July 1, 2026.",
-    contentBn: "পবিত্র ঈদুল আজহা উপলক্ষে ২৬ জুন থেকে ৩০ জুন, ২০২৬ পর্যন্ত সিকো পাওয়ার লিমিটেড কারখানার সকল বিভাগ বন্ধ থাকবে। শিফট অনুযায়ী সীমিত নিরাপত্তা এবং প্ল্যান্ট রক্ষণাবেক্ষণ কর্মীরা দায়িত্বে থাকবেন। ১ জুলাই, ২০২৬ থেকে স্বাভাবিক কারখানার কার্যক্রম পুনরায় শুরু হবে।",
-    files: [
-      { nameEn: "Official Eid Holiday Circular.pdf", nameBn: "অফিসিয়াল ঈদের ছুটির নোটিশ.pdf", url: "/docs/eid-holiday-notice.pdf", size: "620 KB" }
-    ],
-    signatoryEn: "Asaduzzaman Chowdhury",
-    signatoryBn: "আসাদুজ্জামান চৌধুরী",
-    designationEn: "Factory Superintendent, SPL Plant",
-    designationBn: "কারখানা সুপারিন্টেন্ডেন্ট, এসপিএল প্ল্যান্ট"
-  },
-  {
-    id: "N-2026-004",
-    refNo: "SPL/HO/TND/2026/047",
-    publishDate: "2026-06-10",
-    category: "tender",
-    titleEn: "Tender Notice: Supply of Cold Rolled Grain Oriented (CRGO) Steel Core Sheets",
-    titleBn: "দরপত্র বিজ্ঞপ্তি: কোল্ড রোল্ড গ্রেইন ওরিয়েন্টেড (সিআরজিও) স্টিল কোর শিট সরবরাহ",
-    contentEn: "Reputable local and international importers/suppliers are invited to tender for the supply of CRGO Steel Core Sheets. Specific grade, thickness and magnetic loss specifications can be downloaded here. Submissions must reach the Head Office before July 05, 2026.",
-    contentBn: "সিআরজিও স্টিল কোর শিট সরবরাহের জন্য সুপ্রতিষ্ঠিত স্থানীয় ও আন্তর্জাতিক আমদানিকারক/সরবরাহকারীদের কাছ থেকে দরপত্র আহ্বান করা হচ্ছে। নির্দিষ্ট গ্রেড, পুরুত্ব এবং চৌম্বকীয় হ্রাসের স্পেসিফিকেশন এখান থেকে ডাউনলোড করা যাবে। দরপত্রসমূহ আগামী ৫ জুলাই, ২০২৬ এর মধ্যে প্রধান কার্যালয়ে পৌঁছাতে হবে।",
-    files: [
-      { nameEn: "CRGO Core Specification Schedule.pdf", nameBn: "সিআরজিও কোর স্পেসিফিকেশন তফসিল.pdf", url: "/docs/crgo-core-spec.pdf", size: "2.3 MB" },
-      { nameEn: "Tender Submission Form Part-B.pdf", nameBn: "দরপত্র জমা দেওয়ার ফরম পার্ট-বি.pdf", url: "/docs/tender-submission-b.pdf", size: "980 KB" }
-    ],
-    signatoryEn: "Engr. Monirul Islam",
-    signatoryBn: "ইঞ্জি. মনিরুল ইসলাম",
-    designationEn: "Head of Procurement Division, SPL",
-    designationBn: "প্রধান, ক্রয় বিভাগ, এসপিএল"
-  },
-  {
-    id: "N-2026-005",
-    refNo: "SPL/HO/QA/2026/012",
-    publishDate: "2026-06-05",
-    category: "certification",
-    titleEn: "Corporate Notice: Successful ISO 9001:2015 Quality Management System Certification Audit",
-    titleBn: "কর্পোরেট নোটিশ: সফলভাবে আইএসও ৯০০১:২০১৫ কোয়ালিটি ম্যানেজমেন্ট সিস্টেম সার্টিফিকেশন অডিট সম্পন্ন",
-    contentEn: "We are pleased to inform all stakeholders that Seeco Power Limited has successfully cleared its annual surveillance audit for ISO 9001:2015 Quality Management System standards. The audit was conducted by SGS Certification Services at both our Head Office and Factory Plant.",
-    contentBn: "আমরা সকল অংশীদারদের জানাতে পেরে আনন্দিত যে সিকো পাওয়ার লিমিটেড সফলভাবে আইএসও ৯০০১:২০১৫ কোয়ালিটি ম্যানেজমেন্ট সিস্টেম মানদণ্ডের জন্য তার বার্ষিক অডিট সম্পন্ন করেছে। অডিটটি আমাদের প্রধান কার্যালয় এবং কারখানা উভয় প্ল্যান্টে এসজিএস সার্টিফিকেশন সার্ভিসেস দ্বারা পরিচালিত হয়েছিল।",
-    files: [
-      { nameEn: "ISO Certification Press Release.pdf", nameBn: "আইএসও সার্টিফিকেশন ক্লিয়ারেন্স প্রেস বিজ্ঞপ্তি.pdf", url: "/docs/iso-audit-clearance.pdf", size: "750 KB" }
-    ],
-    signatoryEn: "Faisal Ahmed",
-    signatoryBn: "ফয়সাল আহমেদ",
-    designationEn: "Managing Director, SPL",
-    designationBn: "ব্যবস্থাপনা পরিচালক, এসপিএল"
-  }
-];
 
 // Local translations config for Notice board items
 const TRANSLATIONS = {
@@ -186,6 +96,31 @@ export default function NoticesPage() {
   const activeLang = (language === "bn" ? "bn" : "en") as "en" | "bn";
   const text = TRANSLATIONS[activeLang];
 
+  // Notice records loaded from database/fallback
+  const [notices, setNotices] = useState<Notice[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch notices dynamically from DB or fallback to static file
+  useEffect(() => {
+    async function fetchNotices() {
+      try {
+        const res = await fetch("/api/public/notices");
+        if (res.ok) {
+          const data = await res.json();
+          setNotices(data);
+        } else {
+          setNotices(staticNotices as Notice[]);
+        }
+      } catch (error) {
+        console.error("Error fetching notices:", error);
+        setNotices(staticNotices as Notice[]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchNotices();
+  }, []);
+
   // Filtering and search state
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -198,7 +133,7 @@ export default function NoticesPage() {
   const [previewNotice, setPreviewNotice] = useState<Notice | null>(null);
 
   // Filter logic based on category and search query input
-  const filteredNotices = NOTICES_DATA.filter((notice) => {
+  const filteredNotices = notices.filter((notice) => {
     const title = activeLang === "bn" ? notice.titleBn : notice.titleEn;
     const matchesSearch = title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "all" || notice.category === selectedCategory;
@@ -501,7 +436,7 @@ export default function NoticesPage() {
                 <a
                   href={previewFile.url}
                   download
-                  className="flex items-center gap-1.5 bg-brand-red hover:bg-red-600 text-white px-4 py-2 text-[13px] font-bold rounded-lg shadow-lg shadow-red-500/10 transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 bg-brand-red hover:bg-brand-red-hover text-white px-4 py-2 text-[13px] font-bold rounded-lg shadow-lg shadow-red-500/10 transition-colors cursor-pointer"
                 >
                   <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />

@@ -78,6 +78,11 @@ export default function Footer() {
   const pathname = usePathname();
   const isHome = pathname === "/";
 
+  // Hide public footer on dashboard routes
+  if (pathname?.startsWith("/spl-dashboard")) {
+    return null;
+  }
+
   const getHref = (href: string) => {
     if (isHome) return href;
     if (href === "#") return "/";
@@ -274,7 +279,7 @@ export default function Footer() {
                       <g key={i}>
 
                         {/* Thin static base path */}
-                        <path d={pathD} fill="none" stroke="rgba(220,30,30,0.14)" strokeWidth="0.8" />
+                        <path d={pathD} fill="none" stroke="var(--primary-color)" strokeOpacity={0.14} strokeWidth="0.8" />
 
                         {/* Invisible helper path for animateMotion */}
                         <path id={pathId} d={pathD} fill="none" stroke="none" />
@@ -283,7 +288,7 @@ export default function Footer() {
                         <path
                           d={pathD}
                           fill="none"
-                          stroke="#dc1e1e"
+                          stroke="var(--primary-color)"
                           strokeWidth="1.5"
                           strokeLinecap="round"
                           style={{

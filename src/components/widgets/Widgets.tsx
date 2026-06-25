@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 
 /**
@@ -32,8 +33,14 @@ function BrandWhatsAppIcon() {
  * - A red "Back to Top" scroll button in the bottom-right that appears after scrolling.
  */
 export default function Widgets() {
+  const pathname = usePathname();
   const [isScrollButtonVisible, setIsScrollButtonVisible] = useState(false);
   const { t } = useLanguage();
+
+  // Hide public widgets on dashboard routes
+  if (pathname?.startsWith("/spl-dashboard")) {
+    return null;
+  }
 
   // Monitor scroll height to conditionally show the back-to-top button
   useEffect(() => {

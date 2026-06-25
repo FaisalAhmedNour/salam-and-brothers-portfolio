@@ -23,6 +23,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<LanguageType>("en");
   const [isMounted, setIsMounted] = useState(false);
+  const [version, setVersion] = useState(0);
 
   useEffect(() => {
     // Read from localStorage on mount to preserve state
@@ -32,6 +33,35 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.lang = savedLanguage;
     }
     setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    async function loadContactInfo() {
+      try {
+        const res = await fetch("/api/public/contact-info");
+        if (res.ok) {
+          const data = await res.json();
+          if (translations.en.contactInfo) {
+            translations.en.contactInfo.address = data.addressEn || translations.en.contactInfo.address;
+            translations.en.contactInfo.factoryAddress = data.factoryAddressEn || translations.en.contactInfo.factoryAddress;
+            translations.en.contactInfo.email = data.email || translations.en.contactInfo.email;
+            translations.en.contactInfo.email2 = data.email2 || translations.en.contactInfo.email2;
+            translations.en.contactInfo.phone = data.phone || translations.en.contactInfo.phone;
+          }
+          if (translations.bn.contactInfo) {
+            translations.bn.contactInfo.address = data.addressBn || translations.bn.contactInfo.address;
+            translations.bn.contactInfo.factoryAddress = data.factoryAddressBn || translations.bn.contactInfo.factoryAddress;
+            translations.bn.contactInfo.email = data.email || translations.bn.contactInfo.email;
+            translations.bn.contactInfo.email2 = data.email2 || translations.bn.contactInfo.email2;
+            translations.bn.contactInfo.phone = data.phone || translations.bn.contactInfo.phone;
+          }
+          setVersion((v) => v + 1);
+        }
+      } catch (err) {
+        console.error("Failed to load dynamic contact details:", err);
+      }
+    }
+    loadContactInfo();
   }, []);
 
   const setLanguage = (lang: LanguageType) => {

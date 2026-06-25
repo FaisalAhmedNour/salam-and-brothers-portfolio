@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "image_path": "/uploads/transformer1-1-1782393674044.png",
+    "badge_en": "High Efficiency & High Performance",
+    "badge_bn": "উচ্চ দক্ষতা ও উচ্চ কার্যক্ষমতা",
+    "title_en": "Power & Distribution Transformers",
+    "title_bn": "পাওয়ার ও ডিস্ট্রিবিউশন ট্রান্সফরমার",
+    "description_en": "We provide quality with years of experience and our expert team.",
+    "description_bn": "আমরা দীর্ঘ বছরের অভিজ্ঞতা এবং আমাদের বিশেষজ্ঞ দলের সাথে মানসম্পন্ন সেবা প্রদান করি।",
+    "order_index": 1
+  },
+  {
+    "id": 2,
+    "image_path": "/images/Transformer2.1.png",
+    "badge_en": "Innovative Energy Solutions",
+    "badge_bn": "উদ্ভাবনী শক্তি সমাধান",
+    "title_en": "Electric Switchgear Systems",
+    "title_bn": "বৈদ্যুতিক সুইচগিয়ার সিস্টেম",
+    "description_en": "Ensuring ultimate grid security and reliable distribution controls.",
+    "description_bn": "সর্বোচ্চ গ্রিড নিরাপত্তা এবং নির্ভরযোগ্য বন্টন নিয়ন্ত্রণ নিশ্চিত করা।",
+    "order_index": 0
+  },
+  {
+    "id": 3,
+    "image_path": "/images/Transformer3.1.png",
+    "badge_en": "Sustainable Power Delivery",
+    "badge_bn": "টেকসই শক্তি সরবরাহ",
+    "title_en": "Dry-Type Transformer Technologies",
+    "title_bn": "ড্রাই-টাইপ ট্রান্সফরমার প্রযুক্তি",
+    "description_en": "Safe, eco-friendly, and modern electricity conversion for industrial infrastructure.",
+    "description_bn": "শিল্প অবকাঠামোর জন্য নিরাপদ, পরিবেশ-বান্ধব এবং আধুনিক বিদ্যুৎ রূপান্তর।",
+    "order_index": 2
+  }
+]

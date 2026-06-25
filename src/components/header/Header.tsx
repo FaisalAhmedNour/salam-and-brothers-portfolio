@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 import LanguageToggle from "@/components/widgets/LanguageToggle";
+import PublicColorPicker from "@/components/widgets/PublicColorPicker";
 
 /**
  * Type definition for navigation links in the header.
@@ -326,9 +327,12 @@ function HeaderMobileNavLinks({
         {/* Mobile Language Toggle Section */}
         <div className="mt-8 pt-6 border-t border-gray-150 flex flex-col gap-3">
           <span className="text-[12px] font-bold text-gray-400 uppercase tracking-wider">
-            {t("footer.support")} / Lang
+            {t("footer.support")} / Lang & Theme
           </span>
-          <LanguageToggle />
+          <div className="flex flex-wrap items-center gap-3">
+            <LanguageToggle />
+            <PublicColorPicker />
+          </div>
         </div>
       </div>
     </div>
@@ -345,6 +349,11 @@ export default function Header() {
   const { t } = useLanguage();
   const pathname = usePathname();
   const isHome = pathname === "/";
+
+  // Hide public header on dashboard routes
+  if (pathname?.startsWith("/spl-dashboard")) {
+    return null;
+  }
 
   // Handle scroll events to dynamically add styling classes
   useEffect(() => {
@@ -486,9 +495,10 @@ export default function Header() {
             <HeaderDesktopNavLinks />
           </div>
 
-          {/* Desktop Language Toggle */}
-          <div className="hidden lg:block">
+          {/* Desktop Language Toggle & Theme Picker */}
+          <div className="hidden lg:flex items-center gap-4">
             <LanguageToggle />
+            <PublicColorPicker />
           </div>
 
           {/* Mobile Navigation Trigger Toggle */}

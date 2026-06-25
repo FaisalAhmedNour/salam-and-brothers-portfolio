@@ -5,6 +5,8 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import Header from "@/components/header/Header";
 import Footer from "@/components/footer/Footer";
 import Widgets from "@/components/widgets/Widgets";
+import { getSiteSettings } from "@/lib/settings";
+import SiteThemeInitializer from "@/components/widgets/SiteThemeInitializer";
 
 // Configure the AR One Sans font
 const arOneSansFont = AR_One_Sans({
@@ -40,13 +42,36 @@ export const metadata: Metadata = {
  * Integrates Next.js layout structure, wraps the page body,
  * and injects optimized Google Fonts variables.
  */
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSiteSettings();
+
   return (
-    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+    <html
+      lang="en"
+      className="scroll-smooth"
+      data-default-color={settings.primaryColor}
+      data-default-color-hover={settings.primaryColorHover}
+      suppressHydrationWarning
+    >
+      <head>
+        <style
+          id="theme-primary-colors"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: `
+              :root {
+                --primary-color: ${settings.primaryColor};
+                --primary-color-hover: ${settings.primaryColorHover};
+              }
+            `,
+          }}
+        />
+      </head>
+
       <body
         className={[
           arOneSansFont.variable,
@@ -57,6 +82,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <LanguageProvider>
+          <SiteThemeInitializer />
           <div className="relative flex flex-col min-h-screen">
             <Header />
             <main className="grow">
