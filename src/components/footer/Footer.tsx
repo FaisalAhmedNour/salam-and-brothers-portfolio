@@ -248,7 +248,7 @@ export default function Footer() {
               </ul>
 
               <a
-                href="https://server25.flexohost.com:2096/cpsess8479302910/3rdparty/roundcube/?_task=mail&_mbox=INBOX"
+                href="https://seecopowerlimited.com/webmail"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2.5 px-5 py-1.5 rounded-full border bg-transparent text-[12px] font-bold transition-all duration-300 select-none shadow-xs hover:shadow-md hover:-translate-y-0.5 cursor-pointer active:scale-98 footer-webmail-btn"
