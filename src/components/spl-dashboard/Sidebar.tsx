@@ -157,7 +157,7 @@ export default function Sidebar() {
       </div>
 
       {/* Menu links list */}
-      <nav className="flex-1 py-6 px-4 space-y-1">
+      <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto custom-scrollbar">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
           return (
