@@ -6,14 +6,21 @@ import Image from "next/image";
 
 interface LoginPageProps {
   onLoginSuccess?: () => void;
+  inactiveLogout?: boolean;
 }
 
 /**
  * LoginPage Component.
  * Implements a glassmorphic login panel using premium gradients,
  * backdrop blur filters, custom micro-animations, and input validations.
+ * 
+ * @param onLoginSuccess - Callback executed after authentication successfully completes
+ * @param inactiveLogout - Flag to display inactivity notice banner
  */
-export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
+export default function LoginPage({
+  onLoginSuccess,
+  inactiveLogout,
+}: LoginPageProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -115,6 +122,21 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
         {/* Credentials Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           
+          {/* Inactivity warning banner */}
+          {inactiveLogout && (
+            <div className="bg-amber-500/10 border border-amber-500/20 text-amber-400 p-4 rounded-2xl text-[14px] font-medium flex items-start gap-2.5 animate-fade-in">
+              <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="h-5 w-5 shrink-0 mt-0.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3Z" />
+              </svg>
+              <div>
+                <p className="font-extrabold text-[13px] tracking-wide uppercase">Session Expired</p>
+                <p className="text-[12px] text-neutral-400 font-semibold mt-1 normal-case leading-relaxed">
+                  You have been signed out because you were inactive for 30 minutes. Please sign in again.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Error notice banner */}
           {error && (
             <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-2xl text-[14px] font-medium flex items-center gap-2.5">

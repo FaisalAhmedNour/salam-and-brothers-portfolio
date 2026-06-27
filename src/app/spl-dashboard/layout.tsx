@@ -21,6 +21,7 @@ export default function DashboardLayout({
 }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isInactiveLogout, setIsInactiveLogout] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -66,7 +67,14 @@ export default function DashboardLayout({
   if (!isAuthenticated) {
     return (
       <DashboardProvider>
-        <LoginPage onLoginSuccess={() => setIsAuthenticated(true)} />
+        <LoginPage
+          onLoginSuccess={() => {
+            // Reset the inactivity flag upon a new successful login session
+            setIsInactiveLogout(false);
+            setIsAuthenticated(true);
+          }}
+          inactiveLogout={isInactiveLogout}
+        />
       </DashboardProvider>
     );
   }
@@ -74,7 +82,18 @@ export default function DashboardLayout({
   // If logged in, serve the premium dashboard frame
   return (
     <DashboardProvider>
-      <DashboardInnerLayout onLogout={() => setIsAuthenticated(false)}>
+      <DashboardInnerLayout
+        onLogout={() => {
+          // Normal manual logouts should not trigger an inactivity notice
+          setIsInactiveLogout(false);
+          setIsAuthenticated(false);
+        }}
+        onInactiveLogout={() => {
+          // Flag this session end as inactivity-driven to inform the UI
+          setIsInactiveLogout(true);
+          setIsAuthenticated(false);
+        }}
+      >
         {children}
       </DashboardInnerLayout>
     </DashboardProvider>
@@ -83,18 +102,25 @@ export default function DashboardLayout({
 
 /**
  * DashboardInnerLayout Component.
- * Inner shell that consumes the theme preference from the DashboardProvider context
- * and dynamically styles sidebar, header, and panels.
+ * Inner shell that consumes the theme preference from the DashboardProvider context,
+ * manages client-side inactivity timers, and dynamically styles sidebar, header, and panels.
+ * 
+ * @param children - Inner dashboard page content
+ * @param onLogout - Callback function triggered upon manual user logout
+ * @param onInactiveLogout - Callback function triggered when 30 minutes of inactivity is detected
  */
 function DashboardInnerLayout({
   children,
   onLogout,
+  onInactiveLogout,
 }: {
   children: React.ReactNode;
   onLogout: () => void;
+  onInactiveLogout: () => void;
 }) {
   const { theme } = useDashboard();
 
+  // Handle document level dark class application when theme changes
   useEffect(() => {
     const root = document.documentElement;
     if (theme === "dark") {
@@ -107,16 +133,73 @@ function DashboardInnerLayout({
     };
   }, [theme]);
 
+  // Set up inactivity detection for 30 minutes of idle status
+  useEffect(() => {
+    // 30 minutes = 1800000 milliseconds
+    const INACTIVITY_TIMEOUT = 30 * 60 * 1000;
+
+    // We use a React ref for timestamps because updating standard state variables on 
+    // cursor move events would trigger excessive visual re-renders and tank performance.
+    const lastActivityTime = { current: Date.now() };
+
+    const handleActivity = () => {
+      lastActivityTime.current = Date.now();
+    };
+
+    // Standard client user events that imply actual engagement
+    const activityEvents = [
+      "mousedown",
+      "mousemove",
+      "keydown",
+      "scroll",
+      "touchstart",
+      "click"
+    ];
+
+    // Listen to all activity signals to keep updating the timestamp
+    activityEvents.forEach((event) => {
+      window.addEventListener(event, handleActivity, { passive: true });
+    });
+
+    // Check delta periodically rather than using a 30m setTimeout which browser tabs can throttle/freeze
+    const intervalId = setInterval(async () => {
+      const elapsed = Date.now() - lastActivityTime.current;
+      if (elapsed >= INACTIVITY_TIMEOUT) {
+        clearInterval(intervalId);
+
+        try {
+          // Clear backend session to prevent auto-login recovery on reload
+          await fetch("/api/spl-dashboard/auth", {
+            method: "DELETE",
+          });
+        } catch (error) {
+          // Fail-soft: notify console but proceed to push user out of current view
+          console.error("Auto logout API request failed:", error);
+        }
+
+        onInactiveLogout();
+      }
+    }, 10000); // Check every 10 seconds
+
+    return () => {
+      // Clean up event handles and timers to avoid background leaks and unexpected redirects
+      activityEvents.forEach((event) => {
+        window.removeEventListener(event, handleActivity);
+      });
+      clearInterval(intervalId);
+    };
+  }, [onInactiveLogout]);
+
 
   return (
     <div className={`flex h-screen overflow-hidden ${theme} bg-dash-bg text-dash-text font-arone`}>
-      
+
       {/* Navigation Sidebar */}
       <Sidebar />
 
       {/* Workspace panel */}
       <div className="flex-1 flex flex-col overflow-hidden bg-dash-card-bg border-l border-dash-border">
-        
+
         {/* Header Action controls */}
         <Header onLogout={onLogout} />
 
