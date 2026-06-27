@@ -74,7 +74,7 @@ function FooterPhoneIcon() {
  * and a fully animated SVG global shipping destination map.
  */
 export default function Footer() {
-  const { t, logoPath } = useLanguage();
+  const { t, logoPath, language } = useLanguage();
   const pathname = usePathname();
   const isHome = pathname === "/";
 
@@ -125,6 +125,22 @@ export default function Footer() {
 
       {/* Dynamic Keyframes Tag */}
       <style dangerouslySetInnerHTML={{ __html: curvePathsStyles }} />
+
+      <style>{`
+        .footer-webmail-btn {
+          color: var(--primary-color) !important;
+          border-color: color-mix(in srgb, var(--primary-color) 30%, transparent) !important;
+          transition: all 0.3s ease !important;
+        }
+        .footer-webmail-btn:hover {
+          background: linear-gradient(to right, var(--primary-color), var(--primary-color-hover)) !important;
+          color: white !important;
+          border-color: transparent !important;
+        }
+        .footer-webmail-btn svg {
+          fill: currentColor !important;
+        }
+      `}</style>
 
       <div className="mx-auto max-w-310">
 
@@ -230,6 +246,22 @@ export default function Footer() {
                   </span>
                 </li>
               </ul>
+
+              <a
+                href="https://server25.flexohost.com:2096/cpsess8479302910/3rdparty/roundcube/?_task=mail&_mbox=INBOX"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2.5 px-5 py-1.5 rounded-full border bg-transparent text-[12px] font-bold transition-all duration-300 select-none shadow-xs hover:shadow-md hover:-translate-y-0.5 cursor-pointer active:scale-98 footer-webmail-btn"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="h-4.5 w-4.5 shrink-0 group-hover:scale-110 transition-transform duration-300"
+                >
+                  <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm-.5 4.1-7 4.9a1 1 0 0 1-1 0l-7-4.9V6.5l7.5 5.2 7.5-5.2v1.6Z" />
+                </svg>
+                <span>{language === "bn" ? "স্টাফ ওয়েবমেইল" : "Staff Webmail"}</span>
+              </a>
             </div>
           </div>
 
