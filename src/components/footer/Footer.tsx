@@ -128,9 +128,9 @@ export default function Footer() {
 
       <div className="mx-auto max-w-310">
 
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* Core links and information grid */}
-          <div className="xl:col-span-2 grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div className="lg:col-span-2 grid grid-cols-1 gap-5 sm:grid-cols-2">
 
             {/* Column 1: Quick Links */}
             <div className="border-b border-gray-150 pb-5 text-center sm:text-left">
@@ -234,7 +234,7 @@ export default function Footer() {
           </div>
 
           {/* Global Shipment interactive Map container */}
-          <div className="text-center xl:col-span-3 flex items-center justify-center">
+          <div className="text-center lg:col-span-3 flex items-center justify-center">
             {/* <h4 className="font-kanit text-[22px] font-bold text-neutral-900 mb-2">
               Global Shipment Reach
             </h4>

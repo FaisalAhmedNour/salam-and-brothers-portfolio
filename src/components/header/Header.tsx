@@ -183,28 +183,44 @@ function HeaderDesktopNavLinks() {
         {HEADER_NAVIGATION_ITEMS.map((item) => (
           <li
             key={item.labelKey}
-            className="relative"
+            className="relative flex items-center"
             onMouseEnter={() => item.hasDropdown && setActiveDropdown(item.labelKey)}
             onMouseLeave={() => item.hasDropdown && setActiveDropdown(null)}
           >
-            <a
-              href={getHref(item.href)}
-              className={[
-                "group relative flex items-center gap-1 py-7 text-[16px] transition-colors duration-300 hover:text-brand-red",
-                item.active && isHome ? "text-brand-red" : "",
-                item.labelKey === "nav.notice" ? "animate-notice-bounce text-brand-red font-bold" : "",
-              ].join(" ")}
-            >
-              {t(item.labelKey)}
-              {item.hasDropdown ? <ArrowChevronDownIcon /> : null}
+            {item.labelKey === "nav.notice" ? (
+              <a
+                href={getHref(item.href)}
+                className="group relative flex items-center gap-1 py-7 text-[16px] transition-colors duration-300 font-bold notice-tab-color animate-notice-bounce"
+              >
+                {t(item.labelKey)}
+                {item.hasDropdown ? <ArrowChevronDownIcon /> : null}
 
-              {/* Underline indicators with transitions */}
-              {item.active && isHome ? (
-                <span className="absolute bottom-5 left-0 h-0.5 w-full bg-brand-red" />
-              ) : (
-                <span className="absolute bottom-5 left-0 h-0.5 w-0 bg-brand-red transition-all duration-300 group-hover:w-full" />
-              )}
-            </a>
+                {/* Underline indicators with transitions */}
+                {item.active && isHome ? (
+                  <span className="absolute bottom-5 left-0 h-0.5 w-full bg-brand-red" />
+                ) : (
+                  <span className="absolute bottom-5 left-0 h-0.5 w-0 bg-brand-red transition-all duration-300 group-hover:w-full" />
+                )}
+              </a>
+            ) : (
+              <a
+                href={getHref(item.href)}
+                className={[
+                  "group relative flex items-center gap-1 py-7 text-[16px] transition-colors duration-300 hover:text-brand-red",
+                  item.active && isHome ? "text-brand-red" : "",
+                ].join(" ")}
+              >
+                {t(item.labelKey)}
+                {item.hasDropdown ? <ArrowChevronDownIcon /> : null}
+
+                {/* Underline indicators with transitions */}
+                {item.active && isHome ? (
+                  <span className="absolute bottom-5 left-0 h-0.5 w-full bg-brand-red" />
+                ) : (
+                  <span className="absolute bottom-5 left-0 h-0.5 w-0 bg-brand-red transition-all duration-300 group-hover:w-full" />
+                )}
+              </a>
+            )}
 
             {/* Dropdown overlay */}
             {item.hasDropdown && item.dropdownItems && activeDropdown === item.labelKey && (
@@ -319,11 +335,14 @@ function HeaderMobileNavLinks({
                   <a
                     href={getHref(item.href)}
                     onClick={onClose}
-                    className={[
-                      "block py-2 text-[16px] transition-colors duration-200 hover:text-brand-red",
-                      item.active && isHome ? "text-brand-red" : "",
-                      item.labelKey === "nav.notice" ? "animate-notice-bounce text-brand-red font-bold" : "",
-                    ].join(" ")}
+                    className={
+                      item.labelKey === "nav.notice"
+                        ? "block py-2 text-[16px] font-bold notice-tab-color animate-notice-bounce"
+                        : [
+                            "block py-2 text-[16px] transition-colors duration-200 hover:text-brand-red",
+                            item.active && isHome ? "text-brand-red" : "",
+                          ].join(" ")
+                    }
                   >
                     {t(item.labelKey)}
                   </a>
@@ -436,6 +455,13 @@ export default function Header() {
         .animate-notice-bounce {
           animation: notice-attention-bounce 6s infinite ease-in-out;
           display: inline-flex;
+        }
+        .notice-tab-color {
+          color: var(--primary-color) !important;
+          transition: color 0.3s ease;
+        }
+        .notice-tab-color:hover {
+          color: var(--primary-color-hover) !important;
         }
       `}</style>
       {/* Topbar layout */}
