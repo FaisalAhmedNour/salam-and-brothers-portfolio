@@ -22,13 +22,20 @@ export default function PublicColorPicker() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // 1. Fetch current color configuration
+    // 1. Fetch current color configuration and reset if admin color changed
+    const adminColor = document.documentElement.getAttribute("data-default-color") || "#dc2626";
+    const lastAdminColor = localStorage.getItem("last_admin_color");
+    
+    if (lastAdminColor !== adminColor) {
+      localStorage.removeItem("user_site_color");
+      localStorage.setItem("last_admin_color", adminColor);
+    }
+
     const savedColor = localStorage.getItem("user_site_color");
     if (savedColor) {
       setCurrentColor(savedColor);
     } else {
-      const defaultColor = document.documentElement.getAttribute("data-default-color") || "#dc2626";
-      setCurrentColor(defaultColor);
+      setCurrentColor(adminColor);
     }
   }, []);
 

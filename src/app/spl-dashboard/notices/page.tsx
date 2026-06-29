@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useDashboard, Notice, NoticeFile } from "@/context/DashboardContext";
+import MediaPickerModal, { MediaItem } from "@/components/spl-dashboard/MediaPickerModal";
 
 /**
  * DashboardNotices Component.
@@ -17,6 +18,7 @@ export default function DashboardNotices() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingNotice, setEditingNotice] = useState<Notice | null>(null);
   const [activeTab, setActiveTab] = useState<"general" | "en" | "bn" | "attachments">("general");
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
 
   // Upload states
   const [uploading, setUploading] = useState(false);
@@ -101,6 +103,23 @@ export default function DashboardNotices() {
     } finally {
       setUploading(false);
     }
+  };
+
+  /**
+   * Action: Select attachment file from Media Library, append to formData.files array.
+   */
+  const handleSelectFromMedia = (url: string, item?: MediaItem) => {
+    if (!item) return;
+    const newAttachment: NoticeFile = {
+      nameEn: item.originalName,
+      nameBn: item.originalName, // Defaults to English name
+      url: item.url,
+      size: item.fileSize || "1.0 MB",
+    };
+    setFormData((prev) => ({
+      ...prev,
+      files: [...prev.files, newAttachment],
+    }));
   };
 
   const removeAttachment = (indexToRemove: number) => {
@@ -483,18 +502,33 @@ export default function DashboardNotices() {
                 <div className="space-y-6 animate-fade-in">
                   <div className="flex justify-between items-center">
                     <label className="text-[11px] font-extrabold uppercase tracking-wider text-dash-text-muted">
-                      PDF Document Attachments
+                      Document Attachments
                     </label>
-                    <label className="bg-brand-red hover:bg-brand-red-hover text-white text-[12px] font-bold px-4 py-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-1">
-                      <span>{uploading ? "Uploading..." : "Add File"}</span>
-                      <input
-                        type="file"
-                        accept=".pdf,.doc,.docx,.xls,.xlsx"
-                        className="hidden"
-                        disabled={uploading}
-                        onChange={handleFileUpload}
-                      />
-                    </label>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setIsMediaPickerOpen(true)}
+                        className="bg-dash-hover-bg hover:bg-dash-hover-bg/80 border border-dash-border text-dash-text text-[12px] font-bold px-4 py-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-1.5"
+                      >
+                        <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4.5 w-4.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                        </svg>
+                        <span>Select from Media</span>
+                      </button>
+                      <label className="bg-brand-red hover:bg-brand-red-hover text-white text-[12px] font-bold px-4 py-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-1.5">
+                        <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4.5 w-4.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                        </svg>
+                        <span>{uploading ? "Uploading..." : "Upload File"}</span>
+                        <input
+                          type="file"
+                          accept=".pdf,.doc,.docx,.xls,.xlsx"
+                          className="hidden"
+                          disabled={uploading}
+                          onChange={handleFileUpload}
+                        />
+                      </label>
+                    </div>
                   </div>
 
                   {uploadError && (
@@ -558,6 +592,14 @@ export default function DashboardNotices() {
           </div>
         </div>
       )}
+
+      {/* Media Library Picker Modal */}
+      <MediaPickerModal
+        isOpen={isMediaPickerOpen}
+        onClose={() => setIsMediaPickerOpen(false)}
+        onSelect={handleSelectFromMedia}
+        allowedTypes="all"
+      />
 
     </div>
   );

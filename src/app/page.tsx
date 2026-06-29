@@ -6,6 +6,7 @@ import LatestNews from "@/components/news/LatestNews";
 import BrandBanner from "@/components/brand/BrandBanner";
 import ContactCTA from "@/components/contact/ContactCTA";
 import { getSiteSettings } from "@/lib/settings";
+import { getDbProducts } from "@/lib/products";
 
 /**
  * Home landing page container.
@@ -13,6 +14,7 @@ import { getSiteSettings } from "@/lib/settings";
  */
 export default async function Home() {
   const settings = await getSiteSettings();
+  const products = await getDbProducts();
 
   return (
     <div className="relative bg-white text-black overflow-x-hidden">
@@ -20,8 +22,8 @@ export default async function Home() {
       {/* 2. Hero banner segment (with slideshow rotating background) */}
       <Hero />
       
-      {/* 3. Four product item category cards grid */}
-      <ProductsGrid />
+      {/* 3. Dynamic product item cards grid */}
+      <ProductsGrid products={products} />
       
       {/* 4. specialties marquee with looping video overlay background */}
       <MarqueeBand scrollingTexts={settings.scrollingTexts} />

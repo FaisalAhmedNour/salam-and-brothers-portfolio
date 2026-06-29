@@ -211,6 +211,38 @@ const DEFAULT_SETTINGS: SiteSettings = {
 
 const settingsFilePath = path.join(process.cwd(), "src/data/settings.json");
 
+// Cache flag to verify table existence and column types only once per process execution.
+let isTableSchemaVerified = false;
+
+/**
+ * Ensures that the site_settings table exists and that the setting_value column
+ * is of type LONGTEXT to accommodate large serialized configurations (e.g. policy contents).
+ * 
+ * @returns A promise that resolves when table schema verification is completed.
+ */
+async function ensureTableExistsAndSchemaUpdated(): Promise<void> {
+  if (isTableSchemaVerified) {
+    return;
+  }
+  try {
+    // 1. Create table with LONGTEXT if it does not exist
+    await executeQuery(`
+      CREATE TABLE IF NOT EXISTS site_settings (
+        setting_key VARCHAR(100) PRIMARY KEY,
+        setting_value LONGTEXT NOT NULL
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    `);
+
+    // 2. Modify the column to LONGTEXT in case the table already existed with TEXT type
+    await executeQuery(
+      "ALTER TABLE site_settings MODIFY COLUMN setting_value LONGTEXT NOT NULL"
+    );
+    isTableSchemaVerified = true;
+  } catch (err) {
+    console.warn("Settings Lib: Failed to ensure table schema and modify column to LONGTEXT:", err);
+  }
+}
+
 /**
  * Gets the current primary color settings.
  * Attemps querying MySQL first, falling back to the settings.json file.
@@ -218,6 +250,7 @@ const settingsFilePath = path.join(process.cwd(), "src/data/settings.json");
 export async function getSiteSettings(): Promise<SiteSettings> {
   if (isDbConfigured()) {
     try {
+      await ensureTableExistsAndSchemaUpdated();
       const rows = await executeQuery<any[]>(
         "SELECT setting_key, setting_value FROM site_settings"
       );
@@ -272,7 +305,27 @@ export async function getSiteSettings(): Promise<SiteSettings> {
             try {
               settings.policies = JSON.parse(row.setting_value);
             } catch (e) {
-              console.error("Failed to parse policies setting:", e);
+              console.error("Failed to parse policies setting, attempting local fallback:", e);
+              // Attempt to recover the full policies content from local settings.json which wasn't truncated
+              try {
+                if (fs.existsSync(settingsFilePath)) {
+                  const fileContent = fs.readFileSync(settingsFilePath, "utf8");
+                  const parsed = JSON.parse(fileContent);
+                  if (parsed.policies) {
+                    settings.policies = parsed.policies;
+                    
+                    // Asynchronously repair database record since column has now been expanded to LONGTEXT
+                    console.log("Self-healing: Rewriting policies back to DB from local file fallback...");
+                    const serialized = JSON.stringify(parsed.policies);
+                    executeQuery(
+                      "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
+                      ["policies", serialized, serialized]
+                    ).catch(dbErr => console.error("Self-heal: Failed to save back to DB:", dbErr));
+                  }
+                }
+              } catch (fileErr) {
+                console.error("Failed to load policies fallback from settings.json:", fileErr);
+              }
             }
           } else if (row.setting_key === "welcomeModal") {
             try {
@@ -336,7 +389,17 @@ export async function getSiteSettings(): Promise<SiteSettings> {
             settings.missionVision = DEFAULT_SETTINGS.missionVision;
           }
           if (!settings.policies) {
-            settings.policies = DEFAULT_SETTINGS.policies;
+            try {
+              if (fs.existsSync(settingsFilePath)) {
+                const fileContent = fs.readFileSync(settingsFilePath, "utf8");
+                const parsed = JSON.parse(fileContent);
+                settings.policies = parsed.policies || DEFAULT_SETTINGS.policies;
+              } else {
+                settings.policies = DEFAULT_SETTINGS.policies;
+              }
+            } catch (err) {
+              settings.policies = DEFAULT_SETTINGS.policies;
+            }
           }
           if (!settings.welcomeModal) {
             settings.welcomeModal = DEFAULT_SETTINGS.welcomeModal;
@@ -395,13 +458,7 @@ export async function updateSiteSettings(settings: SiteSettings): Promise<boolea
 
   if (isDbConfigured()) {
     try {
-      // Ensure the table exists just in case
-      await executeQuery(`
-        CREATE TABLE IF NOT EXISTS site_settings (
-          setting_key VARCHAR(100) PRIMARY KEY,
-          setting_value TEXT NOT NULL
-        )
-      `);
+      await ensureTableExistsAndSchemaUpdated();
 
       await executeQuery(
         "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",

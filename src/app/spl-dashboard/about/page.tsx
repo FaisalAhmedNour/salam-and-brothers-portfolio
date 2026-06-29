@@ -112,9 +112,26 @@ export default function DashboardAboutSettings() {
     }
   };
 
-  const handleSelectMedia = (url: string) => {
+  const handleSelectMedia = async (url: string) => {
     setAboutImagePath(url);
     setIsMediaPickerOpen(false);
+
+    try {
+      const res = await fetch("/api/spl-dashboard/settings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          aboutImagePath: url,
+        }),
+      });
+      if (!res.ok) {
+        console.error("Failed to auto-save About Us banner image.");
+      }
+    } catch (err) {
+      console.error("Network error auto-saving About Us banner image:", err);
+    }
   };
 
   if (loading) {

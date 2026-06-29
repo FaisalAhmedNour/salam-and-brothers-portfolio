@@ -63,6 +63,22 @@ function copyStaticAssets() {
   if (fs.existsSync(staticSource)) {
     fs.cpSync(staticSource, staticDestination, { recursive: true });
   }
+
+  // Copy scripts directory for database seeding on cPanel
+  const scriptsSource = path.join(__dirname, "scripts");
+  const scriptsDestination = path.join(standalonePath, "scripts");
+  if (fs.existsSync(scriptsSource)) {
+    console.log("Copying scripts directory for database seeding...");
+    fs.cpSync(scriptsSource, scriptsDestination, { recursive: true });
+  }
+
+  // Copy src/data directory containing local JSON data files to seed
+  const dataSource = path.join(__dirname, "src", "data");
+  const dataDestination = path.join(standalonePath, "src", "data");
+  if (fs.existsSync(dataSource)) {
+    console.log("Copying src/data directory containing JSON files...");
+    fs.cpSync(dataSource, dataDestination, { recursive: true });
+  }
 }
 
 /**

@@ -1,6 +1,6 @@
 {
-  "primaryColor": "#059669",
-  "primaryColorHover": "#007043",
+  "primaryColor": "#dc2626",
+  "primaryColorHover": "#b60000",
   "scrollingTexts": [
     {
       "en": "Renewable Energy (PV) Transformers",
@@ -47,9 +47,9 @@
       "bn": "পিভি অ্যাপ্লিকেশনের জন্য শান্ট রিঅ্যাক্টর"
     }
   ],
-  "logoPath": "/uploads/seecoi1-1782552407041.png",
-  "faviconPath": "/icon.png",
-  "contactCTAImagePath": "/uploads/transformer1-1-1782393674044.png",
+  "logoPath": "https://seecopowerlimited.com/uploads/seecoi1-1782606096146.png",
+  "faviconPath": "https://seecopowerlimited.com/uploads/seecoi1-1782606096146.png",
+  "contactCTAImagePath": "https://seecopowerlimited.com/uploads/transformer2-1-1782606119447.png",
   "brandBannerSlogan": {
     "rightLabelEn": "Energizing Today",
     "rightLabelBn": "এনার্জাইজিং টুডে",
@@ -73,7 +73,7 @@
     "para2En": "From our modern production factory located in Ekuria Tila Bari, South Keranigonj, Dhaka, our state-of-the-art machinery and highly experienced engineers produce solutions tailored to utility grids, solar power parks, heavy industries, and commercial high-rise buildings. We do not just build electrical equipment — we engineer long-term energy infrastructure.",
     "para2Bn": "ঢাকা দক্ষিণ কেরানীগঞ্জের একুরিয়া টিলা বাড়িতে অবস্থিত আমাদের আধুনিক উৎপাদন কারখানায় অত্যাধুনিক যন্ত্রপাতি এবং অত্যন্ত অভিজ্ঞ প্রকৌশলী দল ইউটিলিটি গ্রিড, সৌর বিদ্যুৎ প্রকল্প, ভারী শিল্প এবং বাণিজ্যিক ভবনের জন্য কাস্টমাইজড সমাধান তৈরি করে থাকেন। আমরা কেবল বৈদ্যুতিক সরঞ্জামই তৈরি করি না — আমরা দীর্ঘমেয়াদী বিদ্যুৎ অবকাঠামো গড়ে তুলি।"
   },
-  "aboutImagePath": "/images/Transformers-Be-Maintained.png",
+  "aboutImagePath": "https://seecopowerlimited.com/uploads/transformers-be-maintained-1782606169143.png",
   "missionVision": {
     "missionPointsEn": [
       "To manufacture high-quality, cost effective transformers suited to Bangladesh's environmental and grid conditions",
@@ -116,7 +116,21 @@
   },
   "welcomeModal": {
     "active": true,
-    "imagePath": "/uploads/whatsapp-image-2026-05-29-at-4-28-34-am-1782391903109.jpeg",
-    "suppressionDays": 1
+    "imagePath": "https://seecopowerlimited.com/uploads/seecoi1-1782606096146.png",
+    "suppressionDays": 30
+  },
+  "brandIntro": {
+    "subtitleEn": "SEECO Transformer",
+    "subtitleBn": "সিকো ট্রান্সফরমার",
+    "titleEn": "High Quality Distribution & Power Transformers",
+    "titleBn": "উচ্চ মানের ডিস্ট্রিবিউশন ও পাওয়ার ট্রান্সফরমারসমূহ",
+    "descriptionEn": "SEECO Transformer holds a leading position in the transformer industry with its accumulated expertise and reliability. With our commitment to uncompromising quality and a customer-centric approach, we shape the industry and build the energy infrastructure of the future through our innovative solutions.",
+    "descriptionBn": "সিকো ট্রান্সফরমার তার অর্জিত দক্ষতা ও নির্ভরযোগ্যতার সাথে ট্রান্সফরমার শিল্পে একটি অগ্রণী অবস্থানে রয়েছে। আপসহীন গুণমান এবং গ্রাহক-কেন্দ্রিক দৃষ্টিভঙ্গির প্রতি আমাদের প্রতিশ্রুতি সহ, আমরা শিল্পটিকে রূপ দিই এবং আমাদের উদ্ভাবনী সমাধানের মাধ্যমে ভবিষ্যতের জ্বালানি অবকাঠামো তৈরি করি।"
+  },
+  "brandBanner": {
+    "leftPara1En": "SEECO Transformer is a trusted name in the energy sector, offering high-performance transformer solutions tailored to modern infrastructure needs.",
+    "leftPara1Bn": "সিকো ট্রান্সফরমার জ্বালানি খাতে একটি বিশ্বস্ত নাম, যা আধুনিক অবকাঠামোর প্রয়োজন অনুসারে উচ্চ-ক্ষমতাসম্পন্ন ট্রান্সফরমার সমাধান সরবরাহ করে।",
+    "leftPara2En": "With our innovative production approach and customer-oriented mindset, we support critical energy projects across the globe. We don’t just deliver products — we deliver long-term value and reliability.",
+    "leftPara2Bn": "আমাদের উদ্ভাবনী উৎপাদন পদ্ধতি এবং গ্রাহক-বান্ধব মনোভাবের সাথে, আমরা বিশ্বজুড়ে গুরুত্বপূর্ণ জ্বালানি প্রকল্পগুলোতে সহায়তা করি। আমরা শুধু পণ্য সরবরাহ করি না — আমরা দীর্ঘমেয়াদী মূল্য এবং নির্ভরযোগ্যতা প্রদান করি।"
   }
 }

@@ -16,7 +16,7 @@ interface NavigationLinkItem {
   href: string;
   active?: boolean;
   hasDropdown?: boolean;
-  dropdownItems?: { labelKey: string; href: string }[];
+  dropdownItems?: { labelKey?: string; title?: { en: string; bn: string }; href: string }[];
 }
 
 // Navigation links config matching the site structure
@@ -164,9 +164,9 @@ function BrandSocialIcon({ platform, href }: { platform: "linkedin" | "facebook"
  * Navigation links component that renders a list of anchors.
  * Handles dropdown menus on desktop and toggles state.
  */
-function HeaderDesktopNavLinks() {
+function HeaderDesktopNavLinks({ navItems }: { navItems: NavigationLinkItem[] }) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const pathname = usePathname();
   const isHome = pathname === "/";
 
@@ -180,7 +180,7 @@ function HeaderDesktopNavLinks() {
   return (
     <nav aria-label="Primary navigation">
       <ul className="flex items-center gap-7 font-arone font-semibold text-black">
-        {HEADER_NAVIGATION_ITEMS.map((item) => (
+        {navItems.map((item) => (
           <li
             key={item.labelKey}
             className="relative flex items-center"
@@ -226,12 +226,12 @@ function HeaderDesktopNavLinks() {
             {item.hasDropdown && item.dropdownItems && activeDropdown === item.labelKey && (
               <ul className="absolute top-full left-0 z-50 w-60 border border-gray-100 bg-white py-2 shadow-xl animate-fade-in">
                 {item.dropdownItems.map((subItem) => (
-                  <li key={subItem.labelKey}>
+                  <li key={subItem.href}>
                     <a
                       href={getHref(subItem.href)}
                       className="block px-5 py-3 font-arone text-[14px] text-gray-700 transition-colors duration-200 hover:bg-brand-red hover:text-white"
                     >
-                      {t(subItem.labelKey)}
+                      {subItem.title ? subItem.title[language === "bn" ? "bn" : "en"] : t(subItem.labelKey || "")}
                     </a>
                   </li>
                 ))}
@@ -250,9 +250,11 @@ function HeaderDesktopNavLinks() {
 function HeaderMobileNavLinks({
   isOpened,
   onClose,
+  navItems,
 }: {
   isOpened: boolean;
   onClose: () => void;
+  navItems: NavigationLinkItem[];
 }) {
   const [dropdownExpanded, setDropdownExpanded] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -302,7 +304,7 @@ function HeaderMobileNavLinks({
 
         <nav aria-label="Mobile navigation">
           <ul className="flex flex-col gap-2 font-arone font-semibold text-black">
-            {HEADER_NAVIGATION_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <li key={item.labelKey} className="border-b border-gray-150 py-1">
                 {item.hasDropdown ? (
                   <div>
@@ -318,13 +320,13 @@ function HeaderMobileNavLinks({
                     {dropdownExpanded && item.dropdownItems && (
                       <ul className="pl-4 mt-1 bg-gray-50/50 rounded-lg">
                         {item.dropdownItems.map((subItem) => (
-                          <li key={subItem.labelKey}>
+                          <li key={subItem.href}>
                             <a
                               href={getHref(subItem.href)}
                               onClick={onClose}
                               className="block py-2.5 text-[14px] text-gray-600 hover:text-brand-red"
                             >
-                              {t(subItem.labelKey)}
+                              {subItem.title ? subItem.title[language === "bn" ? "bn" : "en"] : t(subItem.labelKey || "")}
                             </a>
                           </li>
                         ))}
@@ -400,6 +402,36 @@ export default function Header() {
   const { t, logoPath, socialLinks } = useLanguage();
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const [navItems, setNavItems] = useState<NavigationLinkItem[]>(HEADER_NAVIGATION_ITEMS);
+
+  // Dynamically fetch products to populate dropdown list from database
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await fetch("/api/public/products");
+        if (res.ok) {
+          const products = await res.json();
+          setNavItems((prev) =>
+            prev.map((item) => {
+              if (item.labelKey === "nav.products") {
+                return {
+                  ...item,
+                  dropdownItems: products.map((p: any) => ({
+                    title: p.title,
+                    href: `/products/${p.slug}`,
+                  })),
+                };
+              }
+              return item;
+            })
+          );
+        }
+      } catch (err) {
+        console.error("Header: Failed to fetch products for menu dropdown:", err);
+      }
+    }
+    fetchProducts();
+  }, []);
 
   // Hide public header on dashboard routes
   if (pathname?.startsWith("/spl-dashboard")) {
@@ -561,7 +593,7 @@ export default function Header() {
 
           {/* Desktop Navigation Links */}
           <div className="hidden lg:block">
-            <HeaderDesktopNavLinks />
+            <HeaderDesktopNavLinks navItems={navItems} />
           </div>
 
           {/* Desktop Language Toggle & Theme Picker */}
@@ -584,7 +616,7 @@ export default function Header() {
       </div>
 
       {/* Mobile drawer layout */}
-      <HeaderMobileNavLinks isOpened={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      <HeaderMobileNavLinks isOpened={isMenuOpen} onClose={() => setIsMenuOpen(false)} navItems={navItems} />
     </header>
   );
 }

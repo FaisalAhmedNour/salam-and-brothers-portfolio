@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
-interface MediaItem {
+export interface MediaItem {
   id: string | number;
   filename: string;
   originalName: string;
@@ -16,7 +16,7 @@ interface MediaItem {
 interface MediaPickerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (url: string) => void;
+  onSelect: (url: string, item?: MediaItem) => void;
   allowedTypes?: "images" | "all";
 }
 
@@ -157,7 +157,7 @@ export default function MediaPickerModal({
 
   const handleSelectConfirm = () => {
     if (selectedItem) {
-      onSelect(selectedItem.url);
+      onSelect(selectedItem.url, selectedItem);
       onClose();
     }
   };
@@ -232,7 +232,7 @@ export default function MediaPickerModal({
                   ref={fileInputRef}
                   onChange={(e) => e.target.files && uploadFiles(e.target.files)}
                   className="hidden"
-                  accept={allowedTypes === "images" ? "image/*" : "image/*,application/pdf"}
+                  accept={allowedTypes === "images" ? "image/*" : "image/*,application/pdf,.doc,.docx,.xls,.xlsx"}
                 />
 
                 <div className="p-4 bg-brand-red/10 text-brand-red rounded-full shadow-inner animate-pulse">

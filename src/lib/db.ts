@@ -1,4 +1,32 @@
 import mysql from "mysql2/promise";
+import fs from "fs";
+import path from "path";
+
+// Self-contained runtime env loader to ensure cPanel Node Selector environment variables
+// (which are stored in .env in the application root) are loaded into process.env at runtime.
+(() => {
+  try {
+    const envPath = path.join(process.cwd(), ".env");
+    if (fs.existsSync(envPath)) {
+      const content = fs.readFileSync(envPath, "utf-8");
+      content.split(/\r?\n/).forEach((line) => {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith("#")) {
+          const firstEqual = trimmed.indexOf("=");
+          if (firstEqual !== -1) {
+            const key = trimmed.substring(0, firstEqual).trim();
+            const value = trimmed.substring(firstEqual + 1).trim().replace(/^['"]|['"]$/g, "");
+            if (key && !(key in process.env)) {
+              process.env[key] = value;
+            }
+          }
+        }
+      });
+    }
+  } catch (err) {
+    console.warn("DB ENV: Failed to load .env manually:", err);
+  }
+})();
 
 // Database configuration loaded from environment variables
 const dbConfig = {
@@ -7,6 +35,7 @@ const dbConfig = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
+  charset: "utf8mb4",
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -35,6 +64,7 @@ export function getDbPool(): mysql.Pool | null {
   if (!isDbConfigured()) {
     return null;
   }
+  console.log('dbConfig', dbConfig);
   if (!pool) {
     pool = mysql.createPool(dbConfig);
   }

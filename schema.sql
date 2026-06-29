@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS admin_users (
   username VARCHAR(50) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS products (
   id VARCHAR(100) PRIMARY KEY,
@@ -26,8 +26,24 @@ CREATE TABLE IF NOT EXISTS products (
   spec_voltage_en VARCHAR(100),
   spec_voltage_bn VARCHAR(100),
   spec_standard_en VARCHAR(100),
-  spec_standard_bn VARCHAR(100)
-);
+  spec_standard_bn VARCHAR(100),
+  advantages_en TEXT,
+  advantages_bn TEXT,
+  applications_en TEXT,
+  applications_bn TEXT,
+  specs_table_en TEXT,
+  specs_table_bn TEXT,
+  accessories_en TEXT,
+  accessories_bn TEXT,
+  quality_text_en TEXT,
+  quality_text_bn TEXT,
+  cta_title_en VARCHAR(255),
+  cta_title_bn VARCHAR(255),
+  cta_text_en TEXT,
+  cta_text_bn TEXT,
+  cta_btn_en VARCHAR(255),
+  cta_btn_bn VARCHAR(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS blog_posts (
   id VARCHAR(100) PRIMARY KEY,
@@ -44,7 +60,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
   excerpt_bn TEXT,
   content_en TEXT,
   content_bn TEXT
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS notices (
   id VARCHAR(100) PRIMARY KEY,
@@ -59,7 +75,7 @@ CREATE TABLE IF NOT EXISTS notices (
   signatory_bn VARCHAR(150),
   designation_en VARCHAR(150),
   designation_bn VARCHAR(150)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS notice_files (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -69,7 +85,7 @@ CREATE TABLE IF NOT EXISTS notice_files (
   url VARCHAR(255) NOT NULL,
   size VARCHAR(50),
   FOREIGN KEY (notice_id) REFERENCES notices(id) ON DELETE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS inquiries (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -79,29 +95,14 @@ CREATE TABLE IF NOT EXISTS inquiries (
   subject VARCHAR(255) NOT NULL,
   message TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  status VARCHAR(20) DEFAULT 'unread' -- 'unread', 'read', 'resolved'
-);
-
--- Insert default admin user: username 'admin', password 'admin' (hashed using SHA-256)
--- Password hash: 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
-INSERT INTO admin_users (username, password_hash)
-VALUES ('admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918')
-ON DUPLICATE KEY UPDATE username = username;
+  status VARCHAR(20) DEFAULT 'unread'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Site Settings Table
 CREATE TABLE IF NOT EXISTS site_settings (
   setting_key VARCHAR(100) PRIMARY KEY,
-  setting_value TEXT NOT NULL
-);
-
--- Insert default site settings: primaryColor #dc2626 (Crimson Red), primaryColorHover #b91c1c
-INSERT INTO site_settings (setting_key, setting_value)
-VALUES ('primaryColor', '#dc2626')
-ON DUPLICATE KEY UPDATE setting_key = setting_key;
-
-INSERT INTO site_settings (setting_key, setting_value)
-VALUES ('primaryColorHover', '#b91c1c')
-ON DUPLICATE KEY UPDATE setting_key = setting_key;
+  setting_value LONGTEXT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Media Library Table
 CREATE TABLE IF NOT EXISTS media (
@@ -112,7 +113,7 @@ CREATE TABLE IF NOT EXISTS media (
   file_size VARCHAR(50) NOT NULL,
   url VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Hero Section Slides Table
 CREATE TABLE IF NOT EXISTS hero_slides (
@@ -126,25 +127,7 @@ CREATE TABLE IF NOT EXISTS hero_slides (
   description_bn TEXT,
   order_index INT DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Alter Products Table to include rich details
-ALTER TABLE products ADD COLUMN IF NOT EXISTS advantages_en TEXT;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS advantages_bn TEXT;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS applications_en TEXT;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS applications_bn TEXT;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS specs_table_en TEXT;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS specs_table_bn TEXT;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS accessories_en TEXT;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS accessories_bn TEXT;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS quality_text_en TEXT;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS quality_text_bn TEXT;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS cta_title_en VARCHAR(255);
-ALTER TABLE products ADD COLUMN IF NOT EXISTS cta_title_bn VARCHAR(255);
-ALTER TABLE products ADD COLUMN IF NOT EXISTS cta_text_en TEXT;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS cta_text_bn TEXT;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS cta_btn_en VARCHAR(255);
-ALTER TABLE products ADD COLUMN IF NOT EXISTS cta_btn_bn VARCHAR(255);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Certificates Table
 CREATE TABLE IF NOT EXISTS certificates (
@@ -158,7 +141,7 @@ CREATE TABLE IF NOT EXISTS certificates (
   image VARCHAR(255),
   order_index INT DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Services Table
 CREATE TABLE IF NOT EXISTS services (
@@ -169,5 +152,18 @@ CREATE TABLE IF NOT EXISTS services (
   desc_bn TEXT,
   order_index INT DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Insert default admin user: username 'admin', password 'admin' (hashed using SHA-256)
+INSERT INTO admin_users (username, password_hash)
+VALUES ('admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918')
+ON DUPLICATE KEY UPDATE username = username;
+
+-- Insert default site settings
+INSERT INTO site_settings (setting_key, setting_value)
+VALUES ('primaryColor', '#dc2626')
+ON DUPLICATE KEY UPDATE setting_key = setting_key;
+
+INSERT INTO site_settings (setting_key, setting_value)
+VALUES ('primaryColorHover', '#b91c1c')
+ON DUPLICATE KEY UPDATE setting_key = setting_key;

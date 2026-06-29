@@ -43,5 +43,23 @@
     "fileSize": "54.21 KB",
     "url": "/uploads/transformer-4-768x768-1782393748188.jpg",
     "createdAt": "2026-06-25T13:22:28.189Z"
+  },
+  {
+    "id": 18,
+    "filename": "in00000216-006500-2026-1782755470629.pdf",
+    "originalName": "IN00000216-006500-2026.pdf",
+    "mimeType": "application/pdf",
+    "fileSize": "419.44 KB",
+    "url": "https://seecopowerlimited.com/uploads/in00000216-006500-2026-1782755470629.pdf",
+    "createdAt": "2026-06-29T17:51:10.635Z"
+  },
+  {
+    "id": 19,
+    "filename": "chatgpt-image-jun-3-2026-04_32_39-pm-1782755866664.png",
+    "originalName": "ChatGPT Image Jun 3, 2026, 04_32_39 PM.png",
+    "mimeType": "image/png",
+    "fileSize": "3.17 MB",
+    "url": "https://seecopowerlimited.com/uploads/chatgpt-image-jun-3-2026-04_32_39-pm-1782755866664.png",
+    "createdAt": "2026-06-29T17:57:46.668Z"
   }
 ]

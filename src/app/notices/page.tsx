@@ -132,6 +132,11 @@ export default function NoticesPage() {
   const [previewFile, setPreviewFile] = useState<NoticeFile | null>(null);
   const [previewNotice, setPreviewNotice] = useState<Notice | null>(null);
 
+  // Compute file formats for preview modal display
+  const isMockFile = previewFile ? previewFile.url.startsWith("/docs/") : false;
+  const isPdf = previewFile ? previewFile.url.toLowerCase().endsWith(".pdf") : false;
+  const isImage = previewFile ? /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(previewFile.url) : false;
+
   // Filter logic based on category and search query input
   const filteredNotices = notices.filter((notice) => {
     const title = activeLang === "bn" ? notice.titleBn : notice.titleEn;
@@ -149,6 +154,33 @@ export default function NoticesPage() {
     // Map to Bengali digits
     const banglaDigits = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
     return dateStr.replace(/[0-9]/g, (digit) => banglaDigits[parseInt(digit)]);
+  };
+
+  /**
+   * Triggers a browser file download using blob creation,
+   * bypassing cross-origin (CORS) restriction rules on standard download anchors.
+   * 
+   * @param url - The source document file URL.
+   * @param filename - The target filename to assign.
+   */
+  const handleDownloadFile = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Network response was not ok");
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.warn("Blob fetch failed, falling back to direct tab download:", error);
+      // Fallback: open file URL directly in a new window tab
+      window.open(url, "_blank");
+    }
   };
 
   /**
@@ -294,16 +326,15 @@ export default function NoticesPage() {
                                         </svg>
                                       </button>
                                       {/* Download trigger */}
-                                      <a
-                                        href={file.url}
-                                        download
-                                        className="p-1 text-neutral-500 hover:text-brand-red hover:bg-white rounded-sm border border-transparent hover:border-neutral-100 shadow-sm transition-all"
+                                      <button
+                                        onClick={() => handleDownloadFile(file.url, activeLang === "bn" ? file.nameBn : file.nameEn)}
+                                        className="p-1 text-neutral-500 hover:text-brand-red hover:bg-white rounded-sm border border-transparent hover:border-neutral-100 shadow-sm transition-all cursor-pointer"
                                         title={text.btnDownload}
                                       >
                                         <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
                                           <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                                         </svg>
-                                      </a>
+                                      </button>
                                     </div>
                                   </div>
                                 ))}
@@ -392,13 +423,12 @@ export default function NoticesPage() {
                               >
                                 {text.btnView}
                               </button>
-                              <a
-                                href={file.url}
-                                download
-                                className="px-3.5 py-2 text-[12px] font-semibold bg-neutral-800 text-white rounded-lg hover:bg-neutral-900 shadow-md transition-colors cursor-pointer"
-                              >
-                                {text.btnDownload}
-                              </a>
+                              <button
+                                        onClick={() => handleDownloadFile(file.url, activeLang === "bn" ? file.nameBn : file.nameEn)}
+                                        className="px-3.5 py-2 text-[12px] font-semibold bg-neutral-800 text-white rounded-lg hover:bg-neutral-900 shadow-md transition-colors cursor-pointer"
+                                      >
+                                        {text.btnDownload}
+                                      </button>
                             </div>
                           </div>
                         ))}
@@ -416,7 +446,7 @@ export default function NoticesPage() {
 
       {/* PDF Document Simulator Preview Modal */}
       {previewFile && previewNotice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
           <div className="relative w-full max-w-4xl max-h-[90vh] bg-neutral-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-neutral-700">
             
             {/* Modal Header Panel */}
@@ -433,16 +463,15 @@ export default function NoticesPage() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <a
-                  href={previewFile.url}
-                  download
+                <button
+                  onClick={() => handleDownloadFile(previewFile.url, activeLang === "bn" ? previewFile.nameBn : previewFile.nameEn)}
                   className="flex items-center gap-1.5 bg-brand-red hover:bg-brand-red-hover text-white px-4 py-2 text-[13px] font-bold rounded-lg shadow-lg shadow-red-500/10 transition-colors cursor-pointer"
                 >
                   <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                   </svg>
                   <span>{text.downloadAll}</span>
-                </a>
+                </button>
                 <button
                   onClick={handleClosePreview}
                   className="p-1.5 text-neutral-400 hover:text-white hover:bg-neutral-700/50 rounded-lg transition-all cursor-pointer"
@@ -455,76 +484,93 @@ export default function NoticesPage() {
               </div>
             </div>
 
-            {/* Modal Body: Custom simulated letterhead paper notice design */}
-            <div className="grow overflow-y-auto p-6 bg-neutral-900/40 flex justify-center">
-              <div className="w-full max-w-2xl bg-white text-black p-8 md:p-12 shadow-2xl relative border border-neutral-100 min-h-[70vh] flex flex-col justify-between font-montserrat">
-                
-                {/* Simulated Stamp Badge (Visual Details) */}
-                <div className="absolute top-8 right-8 border-4 border-dashed border-red-500/20 text-red-500/20 text-[13px] font-extrabold uppercase p-2 pointer-events-none tracking-widest select-none rounded-md">
-                  {text.mockStamp}
+            {/* Modal Body: Actual PDF viewer, Image preview or simulated letterhead fallback */}
+            <div className="grow overflow-y-auto p-6 bg-neutral-900/40 flex justify-center items-center">
+              {!isMockFile && isPdf ? (
+                <iframe
+                  src={previewFile.url}
+                  className="w-full h-full min-h-[70vh] rounded-xl border border-neutral-700 bg-white"
+                  title="Notice Attachment PDF Viewer"
+                />
+              ) : !isMockFile && isImage ? (
+                <div className="relative max-w-full max-h-[70vh] flex items-center justify-center p-2 rounded-xl bg-white border border-neutral-700">
+                  <img
+                    src={previewFile.url}
+                    alt={activeLang === "bn" ? previewFile.nameBn : previewFile.nameEn}
+                    className="max-w-full max-h-[68vh] object-contain rounded-lg shadow-md"
+                  />
                 </div>
-
-                <div>
-                  {/* Letterhead Banner */}
-                  <div className="text-center border-b border-neutral-300 pb-6 mb-8">
-                    <h2 className="font-kanit text-[24px] font-bold text-neutral-950 tracking-wider">
-                      SEECO POWER LIMITED
-                    </h2>
-                    <p className="text-[12px] text-neutral-500 font-bold uppercase tracking-widest mt-1">
-                      Manufacturer of Power & Distribution Transformers
-                    </p>
-                    <p className="text-[11px] text-neutral-400 font-semibold mt-0.5">
-                      3rd Floor, 5 BCC Rd, Dhaka-1203 | Factory: South Keranigonj, Dhaka-1311
-                    </p>
+              ) : (
+                /* Fallback simulated letterhead paper notice design */
+                <div className="w-full max-w-2xl bg-white text-black p-8 md:p-12 shadow-2xl relative border border-neutral-100 min-h-[70vh] flex flex-col justify-between font-montserrat">
+                  
+                  {/* Simulated Stamp Badge (Visual Details) */}
+                  <div className="absolute top-8 right-8 border-4 border-dashed border-red-500/20 text-red-500/20 text-[13px] font-extrabold uppercase p-2 pointer-events-none tracking-widest select-none rounded-md">
+                    {text.mockStamp}
                   </div>
 
-                  {/* Ref & Date Panel */}
-                  <div className="flex justify-between items-center text-[12px] text-neutral-600 font-bold mb-8">
-                    <div>
-                      {text.refLabel} <span className="font-mono text-neutral-800">{previewNotice.refNo}</span>
+                  <div>
+                    {/* Letterhead Banner */}
+                    <div className="text-center border-b border-neutral-300 pb-6 mb-8">
+                      <h2 className="font-kanit text-[24px] font-bold text-neutral-950 tracking-wider">
+                        SEECO POWER LIMITED
+                      </h2>
+                      <p className="text-[12px] text-neutral-500 font-bold uppercase tracking-widest mt-1">
+                        Manufacturer of Power & Distribution Transformers
+                      </p>
+                      <p className="text-[11px] text-neutral-400 font-semibold mt-0.5">
+                        3rd Floor, 5 BCC Rd, Dhaka-1203 | Factory: South Keranigonj, Dhaka-1311
+                      </p>
                     </div>
-                    <div>
-                      {text.colDate}: <span className="text-neutral-800">{formatLocalDate(previewNotice.publishDate)}</span>
+
+                    {/* Ref & Date Panel */}
+                    <div className="flex justify-between items-center text-[12px] text-neutral-600 font-bold mb-8">
+                      <div>
+                        {text.refLabel} <span className="font-mono text-neutral-800">{previewNotice.refNo}</span>
+                      </div>
+                      <div>
+                        {text.colDate}: <span className="text-neutral-800">{formatLocalDate(previewNotice.publishDate)}</span>
+                      </div>
+                    </div>
+
+                    {/* Notice Title segment */}
+                    <div className="text-center mb-8">
+                      <h3 className="font-kanit text-[18px] md:text-[20px] font-bold text-neutral-900 border-b border-double border-neutral-400 pb-3 max-w-xl mx-auto leading-snug">
+                        {activeLang === "bn" ? previewNotice.titleBn : previewNotice.titleEn}
+                      </h3>
+                    </div>
+
+                    {/* Main Document Content paragraphs */}
+                    <div className="text-[14px] md:text-[15px] leading-relaxed text-neutral-800 font-medium text-justify mb-10 whitespace-pre-line font-arone">
+                      {activeLang === "bn" ? previewNotice.contentBn : previewNotice.contentEn}
                     </div>
                   </div>
 
-                  {/* Notice Title segment */}
-                  <div className="text-center mb-8">
-                    <h3 className="font-kanit text-[18px] md:text-[20px] font-bold text-neutral-900 border-b border-double border-neutral-400 pb-3 max-w-xl mx-auto leading-snug">
-                      {activeLang === "bn" ? previewNotice.titleBn : previewNotice.titleEn}
-                    </h3>
+                  {/* Signatory Footer segment */}
+                  <div className="flex justify-end pt-6 border-t border-neutral-200">
+                    <div className="text-right space-y-1 max-w-sm">
+                      {/* Simulated hand signature line */}
+                      <div className="h-8 flex justify-end items-end pr-6 pointer-events-none select-none">
+                        <span className="font-serif italic text-[18px] text-neutral-600 tracking-wide font-medium">
+                          {activeLang === "bn" ? previewNotice.signatoryBn.slice(0, 10) : previewNotice.signatoryEn.slice(0, 10)}...
+                        </span>
+                      </div>
+                      <div className="h-[1.5px] w-48 bg-neutral-400 ml-auto" />
+                      
+                      <h4 className="font-bold text-[14px] text-neutral-900 pt-1 leading-none">
+                        {activeLang === "bn" ? previewNotice.signatoryBn : previewNotice.signatoryEn}
+                      </h4>
+                      <p className="text-[12px] text-neutral-500 font-bold leading-none">
+                        {activeLang === "bn" ? previewNotice.designationBn : previewNotice.designationEn}
+                      </p>
+                      <p className="text-[11px] text-neutral-400 font-bold uppercase tracking-wider">
+                        Seeco Power Ltd.
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Main Document Content paragraphs */}
-                  <div className="text-[14px] md:text-[15px] leading-relaxed text-neutral-800 font-medium text-justify mb-10 whitespace-pre-line font-arone">
-                    {activeLang === "bn" ? previewNotice.contentBn : previewNotice.contentEn}
-                  </div>
                 </div>
-
-                {/* Signatory Footer segment */}
-                <div className="flex justify-end pt-6 border-t border-neutral-200">
-                  <div className="text-right space-y-1 max-w-sm">
-                    {/* Simulated hand signature line */}
-                    <div className="h-8 flex justify-end items-end pr-6 pointer-events-none select-none">
-                      <span className="font-serif italic text-[18px] text-neutral-600 tracking-wide font-medium">
-                        {activeLang === "bn" ? previewNotice.signatoryBn.slice(0, 10) : previewNotice.signatoryEn.slice(0, 10)}...
-                      </span>
-                    </div>
-                    <div className="h-[1.5px] w-48 bg-neutral-400 ml-auto" />
-                    
-                    <h4 className="font-bold text-[14px] text-neutral-900 pt-1 leading-none">
-                      {activeLang === "bn" ? previewNotice.signatoryBn : previewNotice.signatoryEn}
-                    </h4>
-                    <p className="text-[12px] text-neutral-500 font-bold leading-none">
-                      {activeLang === "bn" ? previewNotice.designationBn : previewNotice.designationEn}
-                    </p>
-                    <p className="text-[11px] text-neutral-400 font-bold uppercase tracking-wider">
-                      Seeco Power Ltd.
-                    </p>
-                  </div>
-                </div>
-
-              </div>
+              )}
             </div>
 
             {/* Modal Footer Controls Panel */}

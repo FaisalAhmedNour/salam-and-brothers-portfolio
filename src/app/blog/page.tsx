@@ -168,10 +168,21 @@ export default function BlogListingPage() {
               {featuredPost && (
                 <div className="bg-white rounded-3xl border border-neutral-100 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 grid grid-cols-1 lg:grid-cols-12">
                   <div className="relative h-60 md:h-80 lg:h-full lg:col-span-7 bg-neutral-100 overflow-hidden group">
-                    {/* Placeholder colored canvas if actual image is missing */}
-                    <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center text-white/10 font-black text-[24px] uppercase tracking-widest select-none">
-                      SEECO Power Hub
-                    </div>
+                    {/* Featured Image */}
+                    {featuredPost.image ? (
+                      <Image
+                        src={featuredPost.image}
+                        alt={activeLang === "bn" ? featuredPost.titleBn : featuredPost.titleEn}
+                        fill
+                        priority
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      /* Placeholder colored canvas if actual image is missing */
+                      <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center text-white/10 font-black text-[24px] uppercase tracking-widest select-none">
+                        SEECO Power Hub
+                      </div>
+                    )}
                     {/* Visual post banner */}
                     <div className="absolute inset-0 bg-brand-red/10 group-hover:bg-brand-red/0 transition-all duration-300 z-10" />
                     {/* We can use standard colored gradients as backgrounds for visual assets since no real files exist */}
@@ -230,10 +241,22 @@ export default function BlogListingPage() {
                         className="group flex flex-col justify-between bg-white rounded-2xl border border-neutral-100 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
                       >
                         <div>
-                          {/* Image Placeholder Card */}
-                          <div className="relative h-48 bg-neutral-800 flex items-center justify-center text-white/5 font-black text-[18px] uppercase tracking-widest select-none overflow-hidden">
-                            SEECO Info
-                            <div className="absolute inset-0 bg-brand-red/5 group-hover:bg-brand-red/0 transition-all duration-300 z-10" />
+                          {/* Blog Post Image */}
+                          <div className="relative h-48 bg-neutral-100 overflow-hidden">
+                            {post.image ? (
+                              <Image
+                                src={post.image}
+                                alt={displayTitle}
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                            ) : (
+                              <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center text-white/5 font-black text-[18px] uppercase tracking-widest select-none">
+                                SEECO Info
+                              </div>
+                            )}
+                            <div className="absolute inset-0 bg-brand-red/5 group-hover:bg-brand-red/0 transition-all duration-300 z-10 pointer-events-none" />
                           </div>
 
                           {/* Card Content */}
