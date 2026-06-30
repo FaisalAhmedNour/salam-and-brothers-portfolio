@@ -15,8 +15,18 @@ import path from "path";
           const firstEqual = trimmed.indexOf("=");
           if (firstEqual !== -1) {
             const key = trimmed.substring(0, firstEqual).trim();
-            const value = trimmed.substring(firstEqual + 1).trim().replace(/^['"]|['"]$/g, "");
-            if (key && !(key in process.env)) {
+            let value = trimmed.substring(firstEqual + 1).trim();
+            
+            // Strip inline comments starting with '#' (excluding if inside quotes)
+            const hashIndex = value.indexOf("#");
+            if (hashIndex !== -1) {
+              const beforeHash = value.substring(0, hashIndex).trim();
+              value = beforeHash.replace(/^['"]|['"]$/g, "");
+            } else {
+              value = value.replace(/^['"]|['"]$/g, "");
+            }
+
+            if (key && (!process.env[key] || process.env[key].trim() === "" || process.env[key] === "undefined")) {
               process.env[key] = value;
             }
           }
@@ -37,11 +47,17 @@ const dbConfig = {
   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
   charset: "utf8mb4",
   waitForConnections: true,
-  connectionLimit: 10,
+  connectionLimit: 5, // Lower limit to prevent process exhaustion on cPanel shared hosting
+  maxIdle: 5,
+  idleTimeout: 30000, // Close idle connections after 30s to release resources
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 10000,
   queueLimit: 0,
 };
 
-let pool: mysql.Pool | null = null;
+const globalForDb = globalThis as unknown as {
+  dbPool: mysql.Pool | undefined;
+};
 
 /**
  * Checks if the database credentials are fully configured.
@@ -56,7 +72,7 @@ export function isDbConfigured(): boolean {
 }
 
 /**
- * Initializes and returns the MySQL connection pool.
+ * Initializes and returns the MySQL connection pool singleton.
  * Returns null if the database is not configured.
  * @returns mysql.Pool instance or null.
  */
@@ -64,11 +80,10 @@ export function getDbPool(): mysql.Pool | null {
   if (!isDbConfigured()) {
     return null;
   }
-  // console.log('dbConfig', dbConfig);
-  if (!pool) {
-    pool = mysql.createPool(dbConfig);
+  if (!globalForDb.dbPool) {
+    globalForDb.dbPool = mysql.createPool(dbConfig);
   }
-  return pool;
+  return globalForDb.dbPool;
 }
 
 /**

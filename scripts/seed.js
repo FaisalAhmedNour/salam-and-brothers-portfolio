@@ -14,7 +14,17 @@ const mysql = require("mysql2/promise");
           const firstEqual = trimmed.indexOf("=");
           if (firstEqual !== -1) {
             const key = trimmed.substring(0, firstEqual).trim();
-            const value = trimmed.substring(firstEqual + 1).trim().replace(/^['"]|['"]$/g, "");
+            let value = trimmed.substring(firstEqual + 1).trim();
+            
+            // Strip inline comments starting with '#' (excluding if inside quotes)
+            const hashIndex = value.indexOf("#");
+            if (hashIndex !== -1) {
+              const beforeHash = value.substring(0, hashIndex).trim();
+              value = beforeHash.replace(/^['"]|['"]$/g, "");
+            } else {
+              value = value.replace(/^['"]|['"]$/g, "");
+            }
+
             if (key && !(key in process.env)) {
               process.env[key] = value;
             }

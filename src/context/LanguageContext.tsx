@@ -127,6 +127,29 @@ export function LanguageProvider({
     }
   }
 
+  // Sync translations if initialSettings has contactInfo on load
+  if (initialSettings?.contactInfo) {
+    const info = initialSettings.contactInfo;
+    if (translations.en.contactInfo) {
+      translations.en.contactInfo.address = info.addressEn || translations.en.contactInfo.address;
+      translations.en.contactInfo.factoryAddress = info.factoryAddressEn || translations.en.contactInfo.factoryAddress;
+      translations.en.contactInfo.email = info.email || translations.en.contactInfo.email;
+      translations.en.contactInfo.email2 = info.email2 !== undefined ? info.email2 : translations.en.contactInfo.email2;
+      translations.en.contactInfo.phone = info.phone || translations.en.contactInfo.phone;
+      translations.en.contactInfo.phone2 = info.phone2 !== undefined ? info.phone2 : translations.en.contactInfo.phone2;
+      translations.en.contactInfo.whatsapp = info.whatsapp || translations.en.contactInfo.whatsapp;
+    }
+    if (translations.bn.contactInfo) {
+      translations.bn.contactInfo.address = info.addressBn || translations.bn.contactInfo.address;
+      translations.bn.contactInfo.factoryAddress = info.factoryAddressBn || translations.bn.contactInfo.factoryAddress;
+      translations.bn.contactInfo.email = info.email || translations.bn.contactInfo.email;
+      translations.bn.contactInfo.email2 = info.email2 !== undefined ? info.email2 : translations.bn.contactInfo.email2;
+      translations.bn.contactInfo.phone = info.phone || translations.bn.contactInfo.phone;
+      translations.bn.contactInfo.phone2 = info.phone2 !== undefined ? info.phone2 : translations.bn.contactInfo.phone2;
+      translations.bn.contactInfo.whatsapp = info.whatsapp || translations.bn.contactInfo.whatsapp;
+    }
+  }
+
   useEffect(() => {
     // Read from localStorage on mount to preserve state
     const savedLanguage = localStorage.getItem("preferred_language") as LanguageType;
@@ -137,128 +160,86 @@ export function LanguageProvider({
     setIsMounted(true);
   }, []);
 
+  // Sync prop changes back to state (for live updates or dynamically revalidated settings)
   useEffect(() => {
-    async function loadContactInfo() {
-      try {
-        const res = await fetch("/api/public/contact-info");
-        if (res.ok) {
-          const data = await res.json();
-          if (translations.en.contactInfo) {
-            translations.en.contactInfo.address = data.addressEn || translations.en.contactInfo.address;
-            translations.en.contactInfo.factoryAddress = data.factoryAddressEn || translations.en.contactInfo.factoryAddress;
-            translations.en.contactInfo.email = data.email || translations.en.contactInfo.email;
-            translations.en.contactInfo.email2 = data.email2 !== undefined ? data.email2 : translations.en.contactInfo.email2;
-            translations.en.contactInfo.phone = data.phone || translations.en.contactInfo.phone;
-            translations.en.contactInfo.phone2 = data.phone2 !== undefined ? data.phone2 : translations.en.contactInfo.phone2;
-            translations.en.contactInfo.whatsapp = data.whatsapp || translations.en.contactInfo.whatsapp;
-          }
-          if (translations.bn.contactInfo) {
-            translations.bn.contactInfo.address = data.addressBn || translations.bn.contactInfo.address;
-            translations.bn.contactInfo.factoryAddress = data.factoryAddressBn || translations.bn.contactInfo.factoryAddress;
-            translations.bn.contactInfo.email = data.email || translations.bn.contactInfo.email;
-            translations.bn.contactInfo.email2 = data.email2 !== undefined ? data.email2 : translations.bn.contactInfo.email2;
-            translations.bn.contactInfo.phone = data.phone || translations.bn.contactInfo.phone;
-            translations.bn.contactInfo.phone2 = data.phone2 !== undefined ? data.phone2 : translations.bn.contactInfo.phone2;
-            translations.bn.contactInfo.whatsapp = data.whatsapp || translations.bn.contactInfo.whatsapp;
-          }
-          setVersion((v) => v + 1);
+    if (initialSettings) {
+      if (initialSettings.logoPath) setLogoPath(initialSettings.logoPath);
+      if (initialSettings.faviconPath) setFaviconPath(initialSettings.faviconPath);
+      if (initialSettings.contactCTAImagePath) setContactCTAImagePath(initialSettings.contactCTAImagePath);
+      if (initialSettings.socialLinks) setSocialLinks(initialSettings.socialLinks);
+      if (initialSettings.googleMapsEmbedUrl) setGoogleMapsEmbedUrl(initialSettings.googleMapsEmbedUrl);
+      if (initialSettings.aboutImagePath) setAboutImagePath(initialSettings.aboutImagePath);
+      if (initialSettings.policies) setPolicies(initialSettings.policies);
+      if (initialSettings.welcomeModal) setWelcomeModal(initialSettings.welcomeModal);
+      
+      // Update localized variables in static translation maps
+      if (initialSettings.aboutIntro) {
+        const about = initialSettings.aboutIntro;
+        if (translations.en.about) {
+          translations.en.about.introSubtitle = about.subtitleEn || translations.en.about.introSubtitle;
+          translations.en.about.introTitle = about.titleEn || translations.en.about.introTitle;
+          translations.en.about.introPara1 = about.para1En || translations.en.about.introPara1;
+          translations.en.about.introPara2 = about.para2En || translations.en.about.introPara2;
         }
-      } catch (err) {
-        console.error("Failed to load dynamic contact details:", err);
+        if (translations.bn.about) {
+          translations.bn.about.introSubtitle = about.subtitleBn || translations.bn.about.introSubtitle;
+          translations.bn.about.introTitle = about.titleBn || translations.bn.about.introTitle;
+          translations.bn.about.introPara1 = about.para1Bn || translations.bn.about.introPara1;
+          translations.bn.about.introPara2 = about.para2Bn || translations.bn.about.introPara2;
+        }
       }
-    }
-    loadContactInfo();
-  }, []);
+      if (initialSettings.missionVision) {
+        const mv = initialSettings.missionVision;
+        if (translations.en.missionVision) {
+          translations.en.missionVision.missionPoints = mv.missionPointsEn || translations.en.missionVision.missionPoints;
+          translations.en.missionVision.visionText = mv.visionTextEn || translations.en.missionVision.visionText;
+          translations.en.missionVision.valuesPoints = mv.valuesPointsEn || translations.en.missionVision.valuesPoints;
+        }
+        if (translations.bn.missionVision) {
+          translations.bn.missionVision.missionPoints = mv.missionPointsBn || translations.bn.missionVision.missionPoints;
+          translations.bn.missionVision.visionText = mv.visionTextBn || translations.bn.missionVision.visionText;
+          translations.bn.missionVision.valuesPoints = mv.valuesPointsBn || translations.bn.missionVision.valuesPoints;
+        }
+      }
+      if (initialSettings.brandIntro) {
+        const intro = initialSettings.brandIntro;
+        if (translations.en.brandIntro) {
+          translations.en.brandIntro.subtitle = intro.subtitleEn || translations.en.brandIntro.subtitle;
+          translations.en.brandIntro.title = intro.titleEn || translations.en.brandIntro.title;
+          translations.en.brandIntro.description = intro.descriptionEn || translations.en.brandIntro.description;
+        }
+        if (translations.bn.brandIntro) {
+          translations.bn.brandIntro.subtitle = intro.subtitleBn || translations.bn.brandIntro.subtitle;
+          translations.bn.brandIntro.title = intro.titleBn || translations.bn.brandIntro.title;
+          translations.bn.brandIntro.description = intro.descriptionBn || translations.bn.brandIntro.description;
+        }
+      }
+      if (initialSettings.brandBannerSlogan) {
+        const slogan = initialSettings.brandBannerSlogan;
+        if (translations.en.brandBanner) {
+          translations.en.brandBanner.rightLabel = slogan.rightLabelEn || translations.en.brandBanner.rightLabel;
+          translations.en.brandBanner.rightTitle = slogan.rightTitleEn || translations.en.brandBanner.rightTitle;
+        }
+        if (translations.bn.brandBanner) {
+          translations.bn.brandBanner.rightLabel = slogan.rightLabelBn || translations.bn.brandBanner.rightLabel;
+          translations.bn.brandBanner.rightTitle = slogan.rightTitleBn || translations.bn.brandBanner.rightTitle;
+        }
+      }
+      if (initialSettings.brandBanner) {
+        const banner = initialSettings.brandBanner;
+        if (translations.en.brandBanner) {
+          translations.en.brandBanner.leftPara1 = banner.leftPara1En || translations.en.brandBanner.leftPara1;
+          translations.en.brandBanner.leftPara2 = banner.leftPara2En || translations.en.brandBanner.leftPara2;
+        }
+        if (translations.bn.brandBanner) {
+          translations.bn.brandBanner.leftPara1 = banner.leftPara1Bn || translations.bn.brandBanner.leftPara1;
+          translations.bn.brandBanner.leftPara2 = banner.leftPara2Bn || translations.bn.brandBanner.leftPara2;
+        }
+      }
 
-  useEffect(() => {
-    async function loadPublicSettings() {
-      try {
-        const res = await fetch("/api/public/settings");
-        if (res.ok) {
-          const data = await res.json();
-          if (data.logoPath) setLogoPath(data.logoPath);
-          if (data.faviconPath) setFaviconPath(data.faviconPath);
-          if (data.contactCTAImagePath) setContactCTAImagePath(data.contactCTAImagePath);
-          if (data.socialLinks) setSocialLinks(data.socialLinks);
-          if (data.googleMapsEmbedUrl) setGoogleMapsEmbedUrl(data.googleMapsEmbedUrl);
-          if (data.aboutImagePath) setAboutImagePath(data.aboutImagePath);
-          if (data.aboutIntro) {
-            const about = data.aboutIntro;
-            if (translations.en.about) {
-              translations.en.about.introSubtitle = about.subtitleEn || translations.en.about.introSubtitle;
-              translations.en.about.introTitle = about.titleEn || translations.en.about.introTitle;
-              translations.en.about.introPara1 = about.para1En || translations.en.about.introPara1;
-              translations.en.about.introPara2 = about.para2En || translations.en.about.introPara2;
-            }
-            if (translations.bn.about) {
-              translations.bn.about.introSubtitle = about.subtitleBn || translations.bn.about.introSubtitle;
-              translations.bn.about.introTitle = about.titleBn || translations.bn.about.introTitle;
-              translations.bn.about.introPara1 = about.para1Bn || translations.bn.about.introPara1;
-              translations.bn.about.introPara2 = about.para2Bn || translations.bn.about.introPara2;
-            }
-          }
-          if (data.missionVision) {
-            const mv = data.missionVision;
-            if (translations.en.missionVision) {
-              translations.en.missionVision.missionPoints = mv.missionPointsEn || translations.en.missionVision.missionPoints;
-              translations.en.missionVision.visionText = mv.visionTextEn || translations.en.missionVision.visionText;
-              translations.en.missionVision.valuesPoints = mv.valuesPointsEn || translations.en.missionVision.valuesPoints;
-            }
-            if (translations.bn.missionVision) {
-              translations.bn.missionVision.missionPoints = mv.missionPointsBn || translations.bn.missionVision.missionPoints;
-              translations.bn.missionVision.visionText = mv.visionTextBn || translations.bn.missionVision.visionText;
-              translations.bn.missionVision.valuesPoints = mv.valuesPointsBn || translations.bn.missionVision.valuesPoints;
-            }
-          }
-          if (data.policies) {
-            setPolicies(data.policies);
-          }
-          if (data.welcomeModal) {
-            setWelcomeModal(data.welcomeModal);
-          }
-          if (data.brandIntro) {
-            const intro = data.brandIntro;
-            if (translations.en.brandIntro) {
-              translations.en.brandIntro.subtitle = intro.subtitleEn || translations.en.brandIntro.subtitle;
-              translations.en.brandIntro.title = intro.titleEn || translations.en.brandIntro.title;
-              translations.en.brandIntro.description = intro.descriptionEn || translations.en.brandIntro.description;
-            }
-            if (translations.bn.brandIntro) {
-              translations.bn.brandIntro.subtitle = intro.subtitleBn || translations.bn.brandIntro.subtitle;
-              translations.bn.brandIntro.title = intro.titleBn || translations.bn.brandIntro.title;
-              translations.bn.brandIntro.description = intro.descriptionBn || translations.bn.brandIntro.description;
-            }
-          }
-          if (data.brandBannerSlogan) {
-            const slogan = data.brandBannerSlogan;
-            if (translations.en.brandBanner) {
-              translations.en.brandBanner.rightLabel = slogan.rightLabelEn || translations.en.brandBanner.rightLabel;
-              translations.en.brandBanner.rightTitle = slogan.rightTitleEn || translations.en.brandBanner.rightTitle;
-            }
-            if (translations.bn.brandBanner) {
-              translations.bn.brandBanner.rightLabel = slogan.rightLabelBn || translations.bn.brandBanner.rightLabel;
-              translations.bn.brandBanner.rightTitle = slogan.rightTitleBn || translations.bn.brandBanner.rightTitle;
-            }
-          }
-          if (data.brandBanner) {
-            const banner = data.brandBanner;
-            if (translations.en.brandBanner) {
-              translations.en.brandBanner.leftPara1 = banner.leftPara1En || translations.en.brandBanner.leftPara1;
-              translations.en.brandBanner.leftPara2 = banner.leftPara2En || translations.en.brandBanner.leftPara2;
-            }
-            if (translations.bn.brandBanner) {
-              translations.bn.brandBanner.leftPara1 = banner.leftPara1Bn || translations.bn.brandBanner.leftPara1;
-              translations.bn.brandBanner.leftPara2 = banner.leftPara2Bn || translations.bn.brandBanner.leftPara2;
-            }
-          }
-          setVersion((v) => v + 1);
-        }
-      } catch (err) {
-        console.error("Failed to load public settings dynamically:", err);
-      }
+      setVersion((v) => v + 1);
     }
-    loadPublicSettings();
-  }, []);
+  }, [initialSettings]);
 
   const setLanguage = (lang: LanguageType) => {
     setLanguageState(lang);

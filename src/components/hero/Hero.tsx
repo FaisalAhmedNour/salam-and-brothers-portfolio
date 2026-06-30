@@ -54,33 +54,15 @@ function AngleRightChevronIcon() {
  * Loads slides from dynamic DB API, falls back to static JSON details,
  * and updates background images and overlay copy with animations.
  */
-export default function Hero() {
-  const [slides, setSlides] = useState<Slide[]>(DEFAULT_SLIDES);
+export default function Hero({ initialSlides }: { initialSlides?: Slide[] }) {
+  const [slides, setSlides] = useState<Slide[]>(initialSlides || DEFAULT_SLIDES);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const { language, t } = useLanguage();
 
-  // 1. Fetch dynamic slides from database
-  useEffect(() => {
-    async function loadHeroSlides() {
-      try {
-        const res = await fetch("/api/public/hero");
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            setSlides(data);
-          }
-        }
-      } catch (err) {
-        console.warn("Failed to load hero slides from API, using defaults:", err);
-      }
-    }
-    loadHeroSlides();
-  }, []);
-
-  // 2. Set up rotation interval loop
+  // Set up rotation interval loop
   useEffect(() => {
     if (slides.length <= 1) return;
-    
+
     const slideRotationTimer = setInterval(() => {
       setCurrentSlideIndex((prevIndex) => (prevIndex + 1) % slides.length);
     }, 6000); // Transitions slide every 6 seconds
@@ -95,7 +77,7 @@ export default function Hero() {
   const descriptionText = currentSlide.description[language] || currentSlide.description["en"] || "";
 
   return (
-    <section className="relative h-[calc(100vh-64px)] md:h-[calc(100vh-100px)] min-h-[520px] sm:min-h-[560px] overflow-hidden bg-white font-arone round-t-md rounded-t-3xl">
+    <section className="relative h-[calc(100vh-64px)] md:h-[calc(100vh-100px)] min-h-130 sm:min-h-140 overflow-hidden bg-white font-arone round-t-md rounded-t-3xl">
 
       {/* Background Slideshow Container */}
       <div className="absolute inset-0 z-0 bg-neutral-900">
@@ -132,7 +114,7 @@ export default function Hero() {
       {/* Content layout wrapper */}
       <div className="relative z-20 flex h-full items-center px-6 md:px-12">
         <div className="mx-auto flex w-full max-w-310 justify-center lg:justify-end pb-8 md:pb-16 px-4">
-          
+
           {/* Wrapper key={currentSlideIndex} forces full mount/re-trigger of CSS animations on slide change */}
           <div
             key={currentSlideIndex}

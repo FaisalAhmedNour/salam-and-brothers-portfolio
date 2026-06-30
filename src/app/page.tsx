@@ -5,8 +5,11 @@ import BrandIntroduction from "@/components/brand/BrandIntroduction";
 import LatestNews from "@/components/news/LatestNews";
 import BrandBanner from "@/components/brand/BrandBanner";
 import ContactCTA from "@/components/contact/ContactCTA";
-import { getSiteSettings } from "@/lib/settings";
+import { getSiteSettings, getDbHeroSlides } from "@/lib/settings";
 import { getDbProducts } from "@/lib/products";
+
+// Fallback revalidation cache of 5 minutes (300 seconds) for homepage queries
+export const revalidate = 300;
 
 /**
  * Home landing page container.
@@ -15,12 +18,13 @@ import { getDbProducts } from "@/lib/products";
 export default async function Home() {
   const settings = await getSiteSettings();
   const products = await getDbProducts();
+  const slides = await getDbHeroSlides();
 
   return (
     <div className="relative bg-white text-black overflow-x-hidden">
       
       {/* 2. Hero banner segment (with slideshow rotating background) */}
-      <Hero />
+      <Hero initialSlides={slides} />
       
       {/* 3. Dynamic product item cards grid */}
       <ProductsGrid products={products} />

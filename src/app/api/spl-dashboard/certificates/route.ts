@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { executeQuery, isDbConfigured } from "@/lib/db";
 import { cookies } from "next/headers";
-import fs from "fs";
+import { promises as fs } from "fs";
 import path from "path";
+import { revalidateTag, revalidatePath } from "next/cache";
 
 /**
  * Shared helper to verify if the current user is authenticated as administrator.
@@ -15,25 +16,26 @@ async function checkAuth(): Promise<boolean> {
 
 const localJsonPath = path.join(process.cwd(), "src/data/certificates.json");
 
-function readFallbackJson(): any[] {
+/**
+ * Read certificates fallback JSON file asynchronously.
+ */
+async function readFallbackJson(): Promise<any[]> {
   try {
-    if (fs.existsSync(localJsonPath)) {
-      const data = fs.readFileSync(localJsonPath, "utf-8");
-      return JSON.parse(data);
-    }
+    const data = await fs.readFile(localJsonPath, "utf-8");
+    return JSON.parse(data);
   } catch (err) {
-    console.error("Failed to read fallback certificates.json:", err);
+    return [];
   }
-  return [];
 }
 
-function writeFallbackJson(data: any[]) {
+/**
+ * Write certificates fallback JSON file asynchronously.
+ */
+async function writeFallbackJson(data: any[]) {
   try {
     const dir = path.dirname(localJsonPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(localJsonPath, JSON.stringify(data, null, 2), "utf-8");
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(localJsonPath, JSON.stringify(data, null, 2), "utf-8");
   } catch (err) {
     console.error("Failed to write fallback certificates.json:", err);
   }
@@ -66,7 +68,7 @@ export async function GET() {
   }
 
   // Fallback to static JSON
-  const fallbackCerts = readFallbackJson().map((c) => ({
+  const fallbackCerts = (await readFallbackJson()).map((c) => ({
     id: c.id,
     titleEn: c.titleEn,
     titleBn: c.titleBn || "",
@@ -121,7 +123,7 @@ export async function POST(request: Request) {
     }
 
     // Always update fallback JSON file
-    const currentFallback = readFallbackJson();
+    const currentFallback = await readFallbackJson();
     const newCertJson = {
       id,
       titleEn,
@@ -135,7 +137,10 @@ export async function POST(request: Request) {
     };
     currentFallback.push(newCertJson);
     currentFallback.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
-    writeFallbackJson(currentFallback);
+    await writeFallbackJson(currentFallback);
+
+    revalidatePath("/", "layout");
+    revalidateTag("certificates", "max");
 
     return NextResponse.json({ success: true, message: "Certificate created successfully." }, { status: 200 });
   } catch (error) {
@@ -185,7 +190,7 @@ export async function PUT(request: Request) {
     }
 
     // Always update fallback JSON file
-    const currentFallback = readFallbackJson();
+    const currentFallback = await readFallbackJson();
     const updatedFallback = currentFallback.map((c) => {
       if (c.id === id) {
         return {
@@ -203,7 +208,10 @@ export async function PUT(request: Request) {
       return c;
     });
     updatedFallback.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
-    writeFallbackJson(updatedFallback);
+    await writeFallbackJson(updatedFallback);
+
+    revalidatePath("/", "layout");
+    revalidateTag("certificates", "max");
 
     return NextResponse.json({ success: true, message: "Certificate updated successfully." }, { status: 200 });
   } catch (error) {
@@ -237,9 +245,12 @@ export async function DELETE(request: Request) {
     }
 
     // Always update fallback JSON file
-    const currentFallback = readFallbackJson();
+    const currentFallback = await readFallbackJson();
     const filteredFallback = currentFallback.filter((c) => c.id !== id);
-    writeFallbackJson(filteredFallback);
+    await writeFallbackJson(filteredFallback);
+
+    revalidatePath("/", "layout");
+    revalidateTag("certificates", "max");
 
     return NextResponse.json({ success: true, message: "Certificate deleted successfully." }, { status: 200 });
   } catch (error) {

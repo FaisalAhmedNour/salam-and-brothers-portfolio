@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { executeQuery, isDbConfigured } from "@/lib/db";
 import { cookies } from "next/headers";
-import fs from "fs";
+import { promises as fs } from "fs";
 import path from "path";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 /**
  * Shared helper to verify if the current user is authenticated as administrator.
@@ -16,58 +17,27 @@ async function checkAuth(): Promise<boolean> {
 const localJsonPath = path.join(process.cwd(), "src/data/hero_slides.json");
 
 /**
- * Read slides array from fallback JSON file.
+ * Read slides array from fallback JSON file asynchronously.
  */
-function readFallbackJson(): any[] {
+async function readFallbackJson(): Promise<any[]> {
   try {
-    if (fs.existsSync(localJsonPath)) {
-      const data = fs.readFileSync(localJsonPath, "utf-8");
-      return JSON.parse(data);
-    }
+    const data = await fs.readFile(localJsonPath, "utf-8");
+    return JSON.parse(data);
   } catch (err) {
-    console.error("Failed to read fallback hero_slides.json:", err);
+    return [];
   }
-  return [];
 }
 
 /**
- * Write slides array to fallback JSON file.
+ * Write slides array to fallback JSON file asynchronously.
  */
-function writeFallbackJson(data: any[]) {
+async function writeFallbackJson(data: any[]) {
   try {
     const dir = path.dirname(localJsonPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(localJsonPath, JSON.stringify(data, null, 2), "utf-8");
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(localJsonPath, JSON.stringify(data, null, 2), "utf-8");
   } catch (err) {
     console.error("Failed to write fallback hero_slides.json:", err);
-  }
-}
-
-/**
- * Helper to ensure the database table exists.
- */
-async function initializeHeroTable() {
-  if (isDbConfigured()) {
-    try {
-      await executeQuery(`
-        CREATE TABLE IF NOT EXISTS hero_slides (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          image_path VARCHAR(255) NOT NULL,
-          badge_en VARCHAR(255),
-          badge_bn VARCHAR(255),
-          title_en VARCHAR(255) NOT NULL,
-          title_bn VARCHAR(255) NOT NULL,
-          description_en TEXT,
-          description_bn TEXT,
-          order_index INT DEFAULT 0,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-      `);
-    } catch (err) {
-      console.error("Failed to initialize hero slides table:", err);
-    }
   }
 }
 
@@ -78,8 +48,6 @@ export async function GET() {
   if (!(await checkAuth())) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
-
-  await initializeHeroTable();
 
   if (isDbConfigured()) {
     try {
@@ -103,7 +71,7 @@ export async function GET() {
   }
 
   // Local JSON fallback
-  const fallbackSlides = readFallbackJson().map((s) => ({
+  const fallbackSlides = (await readFallbackJson()).map((s) => ({
     id: s.id,
     imagePath: s.image_path || s.imagePath || "",
     badge: {
@@ -130,8 +98,6 @@ export async function POST(request: Request) {
   if (!(await checkAuth())) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
-
-  await initializeHeroTable();
 
   try {
     const body = await request.json();
@@ -171,7 +137,7 @@ export async function POST(request: Request) {
     }
 
     // 2. Always update local JSON fallback
-    const currentFallback = readFallbackJson();
+    const currentFallback = await readFallbackJson();
     const newSlideJson = {
       id: insertedId,
       image_path: imagePath,
@@ -184,7 +150,11 @@ export async function POST(request: Request) {
       order_index: orderIdx,
     };
     currentFallback.push(newSlideJson);
-    writeFallbackJson(currentFallback);
+    await writeFallbackJson(currentFallback);
+
+    revalidatePath("/");
+    revalidatePath("/", "layout");
+    revalidateTag("hero_slides", "max");
 
     return NextResponse.json({ success: true, id: insertedId }, { status: 200 });
   } catch (error) {
@@ -200,8 +170,6 @@ export async function PUT(request: Request) {
   if (!(await checkAuth())) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
-
-  await initializeHeroTable();
 
   try {
     const body = await request.json();
@@ -239,7 +207,7 @@ export async function PUT(request: Request) {
     }
 
     // 2. Always update local JSON fallback
-    const currentFallback = readFallbackJson();
+    const currentFallback = await readFallbackJson();
     const updatedFallback = currentFallback.map((slide) => {
       if (String(slide.id) === String(id)) {
         return {
@@ -256,7 +224,11 @@ export async function PUT(request: Request) {
       }
       return slide;
     });
-    writeFallbackJson(updatedFallback);
+    await writeFallbackJson(updatedFallback);
+
+    revalidatePath("/");
+    revalidatePath("/", "layout");
+    revalidateTag("hero_slides", "max");
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
@@ -272,8 +244,6 @@ export async function DELETE(request: Request) {
   if (!(await checkAuth())) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
-
-  await initializeHeroTable();
 
   try {
     const { searchParams } = new URL(request.url);
@@ -293,9 +263,13 @@ export async function DELETE(request: Request) {
     }
 
     // 2. Always update local JSON fallback
-    const currentFallback = readFallbackJson();
+    const currentFallback = await readFallbackJson();
     const filteredFallback = currentFallback.filter((slide) => String(slide.id) !== String(idParam));
-    writeFallbackJson(filteredFallback);
+    await writeFallbackJson(filteredFallback);
+
+    revalidatePath("/");
+    revalidatePath("/", "layout");
+    revalidateTag("hero_slides", "max");
 
     return NextResponse.json({ success: true, message: "Slide deleted successfully." }, { status: 200 });
   } catch (error) {

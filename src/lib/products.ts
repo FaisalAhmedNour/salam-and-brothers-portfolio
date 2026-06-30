@@ -1,5 +1,8 @@
 import { executeQuery, isDbConfigured } from "./db";
 import staticProducts from "@/data/products.json";
+import { unstable_cache } from "next/cache";
+import { promises as fs } from "fs";
+import path from "path";
 
 export interface ProductTitle {
   en: string;
@@ -49,10 +52,6 @@ export interface ProductItem {
 
 /**
  * Safely parses a JSON string, falling back to a default value if parsing fails.
- * 
- * @param val - The JSON string to parse.
- * @param fallback - The default fallback value if parsing fails.
- * @returns The parsed object or fallback.
  */
 function safeParseJSON(val: string | null | undefined, fallback: any = []) {
   if (!val) return fallback;
@@ -65,18 +64,13 @@ function safeParseJSON(val: string | null | undefined, fallback: any = []) {
 }
 
 /**
- * Fetches all products from the MySQL database.
- * If the database has records, returns them. If database has 0 records, returns empty list.
- * Falls back to local static JSON if DB is not configured or query fails.
- * 
- * @returns A promise resolving to an array of products.
+ * RAW: Fetches all products from the MySQL database (bypassing cache layer).
  */
-export async function getDbProducts(): Promise<ProductItem[]> {
+async function getDbProductsRaw(): Promise<ProductItem[]> {
   if (isDbConfigured()) {
     try {
       const dbProducts = await executeQuery<any[]>("SELECT * FROM products");
       if (dbProducts) {
-        // Map database row models to public frontend Product schema structure
         return dbProducts.map((p) => ({
           id: p.id,
           slug: p.slug,
@@ -129,5 +123,25 @@ export async function getDbProducts(): Promise<ProductItem[]> {
       console.error("Failed to query DB products, falling back to static:", err);
     }
   }
-  return staticProducts as ProductItem[];
+
+  // Fallback: Read local products.json file dynamically from disk
+  try {
+    const localJsonPath = path.join(process.cwd(), "src/data/products.json");
+    const data = await fs.readFile(localJsonPath, "utf-8");
+    return JSON.parse(data) as ProductItem[];
+  } catch (err) {
+    console.error("Failed to read dynamic products.json fallback, using static compilation cache:", err);
+    return staticProducts as ProductItem[];
+  }
 }
+
+/**
+ * Gets the cached products list.
+ */
+export const getDbProducts = unstable_cache(
+  async (): Promise<ProductItem[]> => {
+    return getDbProductsRaw();
+  },
+  ["products-list-cache-key"],
+  { tags: ["products"], revalidate: 300 }
+);

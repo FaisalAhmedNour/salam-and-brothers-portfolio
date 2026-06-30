@@ -101,22 +101,63 @@ export async function POST(request: Request) {
       },
     };
 
-    // Send POST request to EmailJS REST API.
-    // Fetch is natively available on the server context in Node.js 18+ and Next.js.
-    const emailJsResponse = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    // Helper to resolve sleep delay promise
+    const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    if (!emailJsResponse.ok) {
-      const errorText = await emailJsResponse.text();
-      console.error("EmailJS API responded with error:", errorText);
+    let emailJsSuccess = false;
+    let lastErrorMsg = "";
+    let statusCode = 200;
+    const maxRetries = 3;
+
+    // Perform a retry loop with exponential backoff and timeout handling (Goal 12)
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      if (attempt > 0) {
+        // Backoff delay: 500ms, 1000ms, 2000ms
+        const backoffDelay = 500 * Math.pow(2, attempt - 1);
+        console.warn(`Retrying EmailJS dispatch. Attempt ${attempt} of ${maxRetries} after ${backoffDelay}ms delay...`);
+        await delay(backoffDelay);
+      }
+
+      // Send POST request to EmailJS REST API with a 5-second timeout limit.
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+      try {
+        const emailJsResponse = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (emailJsResponse.ok) {
+          emailJsSuccess = true;
+          break;
+        } else {
+          statusCode = emailJsResponse.status;
+          lastErrorMsg = await emailJsResponse.text();
+          console.error(`EmailJS API responded with error (status: ${statusCode}):`, lastErrorMsg);
+          
+          // If it's a client error (e.g. invalid credentials 400-499), retry is futile, fail early.
+          if (statusCode >= 400 && statusCode < 500) {
+            break;
+          }
+        }
+      } catch (fetchErr: any) {
+        clearTimeout(timeoutId);
+        lastErrorMsg = fetchErr.name === "AbortError" ? "Timeout after 5000ms" : (fetchErr.message || String(fetchErr));
+        console.error(`EmailJS attempt ${attempt} failed with exception:`, lastErrorMsg);
+      }
+    }
+
+    if (!emailJsSuccess) {
       return NextResponse.json(
-        { error: "Failed to dispatch email via provider." },
-        { status: 502 } // Bad Gateway from external API
+        { error: `Failed to dispatch email: ${lastErrorMsg || "Unknown provider issue"}` },
+        { status: statusCode >= 400 && statusCode < 500 ? statusCode : 502 }
       );
     }
 
@@ -133,4 +174,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

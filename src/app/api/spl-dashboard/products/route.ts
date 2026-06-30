@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { executeQuery, isDbConfigured } from "@/lib/db";
 import { cookies } from "next/headers";
-import fs from "fs";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { promises as fs } from "fs";
 import path from "path";
 
 /**
@@ -15,25 +16,26 @@ async function checkAuth(): Promise<boolean> {
 
 const localJsonPath = path.join(process.cwd(), "src/data/products.json");
 
-function readFallbackJson(): any[] {
+/**
+ * Read products fallback JSON file asynchronously.
+ */
+async function readFallbackJson(): Promise<any[]> {
   try {
-    if (fs.existsSync(localJsonPath)) {
-      const data = fs.readFileSync(localJsonPath, "utf-8");
-      return JSON.parse(data);
-    }
+    const data = await fs.readFile(localJsonPath, "utf-8");
+    return JSON.parse(data);
   } catch (err) {
-    console.error("Failed to read fallback products.json:", err);
+    return [];
   }
-  return [];
 }
 
-function writeFallbackJson(data: any[]) {
+/**
+ * Write products fallback JSON file asynchronously.
+ */
+async function writeFallbackJson(data: any[]) {
   try {
     const dir = path.dirname(localJsonPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(localJsonPath, JSON.stringify(data, null, 2), "utf-8");
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(localJsonPath, JSON.stringify(data, null, 2), "utf-8");
   } catch (err) {
     console.error("Failed to write fallback products.json:", err);
   }
@@ -112,7 +114,7 @@ export async function GET() {
   }
 
   // Fallback to static JSON
-  const fallbackProducts = readFallbackJson().map((p) => ({
+  const fallbackProducts = (await readFallbackJson()).map((p) => ({
     id: p.id,
     slug: p.slug,
     category: p.category,
@@ -195,7 +197,7 @@ export async function POST(request: Request) {
     }
 
     // 2. Always write to fallback JSON file
-    const currentFallback = readFallbackJson();
+    const currentFallback = await readFallbackJson();
     const newProductJson = {
       id,
       slug,
@@ -216,7 +218,14 @@ export async function POST(request: Request) {
       ctaBtn: ctaBtn || { en: "", bn: "" },
     };
     currentFallback.push(newProductJson);
-    writeFallbackJson(currentFallback);
+    await writeFallbackJson(currentFallback);
+
+    // Purge ISR page caches and cache tag on modifications
+    revalidatePath("/products");
+    revalidatePath("/products/[slug]");
+    revalidatePath("/");
+    revalidatePath("/", "layout");
+    revalidateTag("products", "max");
 
     return NextResponse.json({ success: true, message: "Product created successfully." }, { status: 200 });
   } catch (error) {
@@ -287,7 +296,7 @@ export async function PUT(request: Request) {
     }
 
     // 2. Always write to fallback JSON file
-    const currentFallback = readFallbackJson();
+    const currentFallback = await readFallbackJson();
     const updatedFallback = currentFallback.map((p) => {
       if (p.id === id) {
         return {
@@ -312,7 +321,17 @@ export async function PUT(request: Request) {
       }
       return p;
     });
-    writeFallbackJson(updatedFallback);
+    await writeFallbackJson(updatedFallback);
+
+    // Purge ISR page caches and cache tag on modifications
+    revalidatePath("/products");
+    if (slug) {
+      revalidatePath(`/products/${slug}`);
+    }
+    revalidatePath("/products/[slug]");
+    revalidatePath("/");
+    revalidatePath("/", "layout");
+    revalidateTag("products", "max");
 
     return NextResponse.json({ success: true, message: "Product updated successfully." }, { status: 200 });
   } catch (error) {
@@ -347,9 +366,16 @@ export async function DELETE(request: Request) {
     }
 
     // 2. Always write to fallback JSON file
-    const currentFallback = readFallbackJson();
+    const currentFallback = await readFallbackJson();
     const updatedFallback = currentFallback.filter((p) => p.id !== id);
-    writeFallbackJson(updatedFallback);
+    await writeFallbackJson(updatedFallback);
+
+    // Purge ISR page caches and cache tag on modifications
+    revalidatePath("/products");
+    revalidatePath("/products/[slug]");
+    revalidatePath("/");
+    revalidateTag("products", "max");
+    revalidatePath("/", "layout");
 
     return NextResponse.json({ success: true, message: "Product deleted successfully." }, { status: 200 });
   } catch (error) {

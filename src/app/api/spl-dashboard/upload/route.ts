@@ -1,6 +1,16 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
+import { cookies } from "next/headers";
+import { promises as fs } from "fs";
 import path from "path";
+
+/**
+ * Shared helper to verify if the current user is authenticated as administrator.
+ */
+async function checkAuth(): Promise<boolean> {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("spl_session");
+  return !!(session && session.value === "spl_admin_logged_in");
+}
 
 /**
  * Helper to format file sizes in bytes to human-readable string.
@@ -16,16 +26,43 @@ function formatBytes(bytes: number, decimals = 2) {
 
 /**
  * Handles POST requests to /api/spl-dashboard/upload.
- * Receives file data, writes to the filesystem (outside or inside project based on UPLOAD_DIR),
- * and returns the mapped public URL.
+ * Receives file data, writes to the filesystem asynchronously, and returns the public URL.
+ * Securely protected by admin check and file validations.
  */
 export async function POST(request: Request) {
+  // Protect dashboard API (Goal 16)
+  if (!(await checkAuth())) {
+    return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
+  }
+
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
+
+    // Limit upload to 10MB to protect cPanel limits (Goal 16)
+    const maxSizeBytes = 10 * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      return NextResponse.json({ error: "File exceeds 10MB upload limit." }, { status: 400 });
+    }
+
+    // Validate MIME types against whitelist (Goal 16)
+    const mimeType = file.type || "application/octet-stream";
+    const allowedMimeTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "image/svg+xml",
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ];
+    if (!allowedMimeTypes.includes(mimeType)) {
+      return NextResponse.json({ error: "Unsupported file type. Only images, PDFs, and Word documents are allowed." }, { status: 400 });
     }
 
     // Convert file object to buffer
@@ -38,10 +75,8 @@ export async function POST(request: Request) {
       ? path.resolve(uploadDirEnv)
       : path.join(process.cwd(), "public", "uploads");
 
-    // Make sure the target directory exists
-    if (!fs.existsSync(targetDir)) {
-      fs.mkdirSync(targetDir, { recursive: true });
-    }
+    // Make sure the target directory exists asynchronously (Goal 10)
+    await fs.mkdir(targetDir, { recursive: true });
 
     // Generate secure and unique filename to prevent namespace clashes
     const fileExt = path.extname(file.name);
@@ -51,8 +86,8 @@ export async function POST(request: Request) {
     const uniqueName = `${baseName}-${Date.now()}${fileExt}`;
     const targetPath = path.join(targetDir, uniqueName);
 
-    // Write file to server storage
-    fs.writeFileSync(targetPath, buffer);
+    // Write file to server storage asynchronously (Goal 10)
+    await fs.writeFile(targetPath, buffer);
 
     // Determine the accessible URL to serve back to the client
     const uploadUrlEnv = process.env.NEXT_PUBLIC_UPLOAD_URL;

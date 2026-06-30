@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { executeQuery, isDbConfigured } from "@/lib/db";
 import { cookies } from "next/headers";
-import fs from "fs";
+import { promises as fs } from "fs";
 import path from "path";
 
 /**
@@ -11,29 +11,6 @@ async function checkAuth(): Promise<boolean> {
   const cookieStore = await cookies();
   const session = cookieStore.get("spl_session");
   return !!(session && session.value === "spl_admin_logged_in");
-}
-
-/**
- * Helper to ensure the media database table exists when MySQL is configured.
- */
-async function initializeMediaTable() {
-  if (isDbConfigured()) {
-    try {
-      await executeQuery(`
-        CREATE TABLE IF NOT EXISTS media (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          filename VARCHAR(255) NOT NULL UNIQUE,
-          original_name VARCHAR(255) NOT NULL,
-          mime_type VARCHAR(100) NOT NULL,
-          file_size VARCHAR(50) NOT NULL,
-          url VARCHAR(255) NOT NULL,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-      `);
-    } catch (err) {
-      console.error("Failed to initialize media table:", err);
-    }
-  }
 }
 
 /**
@@ -51,30 +28,25 @@ function formatBytes(bytes: number, decimals = 2) {
 const localJsonPath = path.join(process.cwd(), "src/data/media.json");
 
 /**
- * Read media array from fallback JSON file.
+ * Read media array from fallback JSON file asynchronously.
  */
-function readFallbackJson(): any[] {
+async function readFallbackJson(): Promise<any[]> {
   try {
-    if (fs.existsSync(localJsonPath)) {
-      const data = fs.readFileSync(localJsonPath, "utf-8");
-      return JSON.parse(data);
-    }
+    const data = await fs.readFile(localJsonPath, "utf-8");
+    return JSON.parse(data);
   } catch (err) {
-    console.error("Failed to read fallback media.json:", err);
+    return [];
   }
-  return [];
 }
 
 /**
- * Write media array to fallback JSON file.
+ * Write media array to fallback JSON file asynchronously.
  */
-function writeFallbackJson(data: any[]) {
+async function writeFallbackJson(data: any[]) {
   try {
     const dir = path.dirname(localJsonPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(localJsonPath, JSON.stringify(data, null, 2), "utf-8");
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(localJsonPath, JSON.stringify(data, null, 2), "utf-8");
   } catch (err) {
     console.error("Failed to write fallback media.json:", err);
   }
@@ -87,8 +59,6 @@ export async function GET() {
   if (!(await checkAuth())) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
-
-  await initializeMediaTable();
 
   // Try fetching from database if configured
   if (isDbConfigured()) {
@@ -105,8 +75,7 @@ export async function GET() {
   }
 
   // Fallback to local JSON
-  const fallbackData = readFallbackJson();
-  // Sort fallback data by date descending (assuming new items are appended)
+  const fallbackData = await readFallbackJson();
   const sortedFallback = [...fallbackData].reverse();
   return NextResponse.json(sortedFallback, { status: 200 });
 }
@@ -119,14 +88,34 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  await initializeMediaTable();
-
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
+
+    // Limit upload to 10MB to protect cPanel storage and prevent DOS
+    const maxSizeBytes = 10 * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      return NextResponse.json({ error: "File size exceeds 10MB limit." }, { status: 400 });
+    }
+
+    // Whitelist allowed MIME types for uploads
+    const mimeType = file.type || "application/octet-stream";
+    const allowedMimeTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "image/svg+xml",
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ];
+    if (!allowedMimeTypes.includes(mimeType)) {
+      return NextResponse.json({ error: "Unsupported file type. Only images, PDFs, and Word documents are allowed." }, { status: 400 });
     }
 
     // Convert file object to buffer
@@ -139,9 +128,7 @@ export async function POST(request: Request) {
       ? path.resolve(uploadDirEnv)
       : path.join(process.cwd(), "public", "uploads");
 
-    if (!fs.existsSync(targetDir)) {
-      fs.mkdirSync(targetDir, { recursive: true });
-    }
+    await fs.mkdir(targetDir, { recursive: true });
 
     // Generate unique name
     const fileExt = path.extname(file.name);
@@ -151,8 +138,8 @@ export async function POST(request: Request) {
     const uniqueName = `${baseName}-${Date.now()}${fileExt}`;
     const targetPath = path.join(targetDir, uniqueName);
 
-    // Write file to filesystem
-    fs.writeFileSync(targetPath, buffer);
+    // Write file to filesystem asynchronously
+    await fs.writeFile(targetPath, buffer);
 
     // Compute URL
     const uploadUrlEnv = process.env.NEXT_PUBLIC_UPLOAD_URL;
@@ -161,7 +148,6 @@ export async function POST(request: Request) {
       : `/uploads/${uniqueName}`;
 
     const formattedSize = formatBytes(file.size);
-    const mimeType = file.type || "application/octet-stream";
     const originalName = file.name;
 
     const newMedia = {
@@ -198,13 +184,13 @@ export async function POST(request: Request) {
     }
 
     // 2. Always write to fallback JSON file to remain in sync
-    const currentFallback = readFallbackJson();
+    const currentFallback = await readFallbackJson();
     const fallbackEntry = {
       id: insertedId,
       ...newMedia,
     };
     currentFallback.push(fallbackEntry);
-    writeFallbackJson(currentFallback);
+    await writeFallbackJson(currentFallback);
 
     return NextResponse.json(fallbackEntry, { status: 200 });
   } catch (error) {
@@ -220,8 +206,6 @@ export async function DELETE(request: Request) {
   if (!(await checkAuth())) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
-
-  await initializeMediaTable();
 
   try {
     const { searchParams } = new URL(request.url);
@@ -251,7 +235,7 @@ export async function DELETE(request: Request) {
     }
 
     // Fallback/sync to local JSON filename query
-    const fallbackData = readFallbackJson();
+    const fallbackData = await readFallbackJson();
     const fallbackItem = fallbackData.find((item) => String(item.id) === String(idParam));
     if (fallbackItem) {
       filenameToDelete = fallbackItem.filename;
@@ -262,7 +246,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "Media file record not found" }, { status: 404 });
     }
 
-    // 1. Delete physical file
+    // 1. Delete physical file asynchronously
     const uploadDirEnv = process.env.UPLOAD_DIR;
     const targetDir = uploadDirEnv
       ? path.resolve(uploadDirEnv)
@@ -270,11 +254,11 @@ export async function DELETE(request: Request) {
     const targetPath = path.join(targetDir, filenameToDelete);
 
     try {
-      if (fs.existsSync(targetPath)) {
-        fs.unlinkSync(targetPath);
+      await fs.unlink(targetPath);
+    } catch (fsErr: any) {
+      if (fsErr.code !== "ENOENT") {
+        console.warn(`Physical file deletion failed for ${filenameToDelete}:`, fsErr);
       }
-    } catch (fsErr) {
-      console.warn(`Physical file deletion failed for ${filenameToDelete}:`, fsErr);
     }
 
     // 2. Delete from Database
@@ -288,7 +272,7 @@ export async function DELETE(request: Request) {
 
     // 3. Delete from fallback JSON
     const updatedFallback = fallbackData.filter((item) => String(item.id) !== String(idParam));
-    writeFallbackJson(updatedFallback);
+    await writeFallbackJson(updatedFallback);
 
     return NextResponse.json({ success: true, message: "Media deleted successfully." }, { status: 200 });
   } catch (error) {

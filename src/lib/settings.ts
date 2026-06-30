@@ -1,5 +1,5 @@
 import { executeQuery, isDbConfigured } from "./db";
-import fs from "fs";
+import { promises as fs } from "fs";
 import path from "path";
 import { darkenColor } from "./colorUtils";
 import { serializePolicyToMarkdown } from "./policyParser";
@@ -7,6 +7,7 @@ import { privacyPolicyContent } from "../app/privacy-policy/content";
 import { cookiePolicyContent } from "../app/cookie-policy/content";
 import { returnPolicyContent } from "../app/return-policy/content";
 import { termsOfServiceContent } from "../app/terms-of-service/content";
+import { unstable_cache } from "next/cache";
 
 export { darkenColor };
 
@@ -85,24 +86,9 @@ export interface SiteSettings {
     leftPara2En: string;
     leftPara2Bn: string;
   };
+  contactInfo?: any;
 }
 
-const DEFAULT_SCROLLING_TEXTS: SpecialtyTransformer[] = [
-  { en: "Renewable Energy (PV) Transformers", bn: "নবায়নযোগ্য শক্তি (পিভি) ট্রান্সফরমার" },
-  { en: "Dual HV - Dual LV Transformers", bn: "ডুয়াল এইচভি - ডুয়াল এলভি ট্রান্সফরমার" },
-  { en: "Auto-Transformers", bn: "অটো-трансформер" }, // Note: fixing spelling if any or keep original
-  { en: "Auto-Transformers", bn: "অটো-ট্রান্সফরমার" },
-  { en: "Insulation Transformers", bn: "ইনসুলেশন ট্রান্সফরমার" },
-  { en: "Grounding / Earthing Transformers", bn: "গ্রাউন্ডিং / আর্থিং ট্রান্সফরমার" },
-  { en: "Furnace Transformer", bn: "ফার্নেস ট্রান্সফরমার" },
-  { en: "Motor Driven Transformer", bn: "মোটর চালিত ট্রান্সফরমার" },
-  { en: "Step Up / Step Down Transformers", bn: "স্টেপ আপ / স্টেপ ডাউন ট্রান্সফরমার" },
-  { en: "Rectifier Transformers (6P - 12P)", bn: "রেকটিফায়ার ট্রান্সফরমার (৬পি - ১২পি)" },
-  { en: "Pad-Mounted Transformers", bn: "প্যাড-মাউন্টেড ট্রান্সফরমার" },
-  { en: "Shunt Reactor For PV Application", bn: "পিভি অ্যাপ্লিকেশনের জন্য শান্ট রিঅ্যাক্টর" },
-];
-
-// Clean duplicate auto-transformer entry (the helper array had a typo or double entry, let's keep it neat)
 const UNIQUE_DEFAULT_SCROLLING_TEXTS: SpecialtyTransformer[] = [
   { en: "Renewable Energy (PV) Transformers", bn: "নবায়নযোগ্য শক্তি (পিভি) ট্রান্সফরমার" },
   { en: "Dual HV - Dual LV Transformers", bn: "ডুয়াল এইচভি - ডুয়াল এলভি ট্রান্সফরমার" },
@@ -211,56 +197,33 @@ const DEFAULT_SETTINGS: SiteSettings = {
 
 const settingsFilePath = path.join(process.cwd(), "src/data/settings.json");
 
-// Cache flag to verify table existence and column types only once per process execution.
-let isTableSchemaVerified = false;
-
 /**
- * Ensures that the site_settings table exists and that the setting_value column
- * is of type LONGTEXT to accommodate large serialized configurations (e.g. policy contents).
- * 
- * @returns A promise that resolves when table schema verification is completed.
+ * RAW: Gets the current site settings (bypassing cache layer).
  */
-async function ensureTableExistsAndSchemaUpdated(): Promise<void> {
-  if (isTableSchemaVerified) {
-    return;
-  }
-  try {
-    // 1. Create table with LONGTEXT if it does not exist
-    await executeQuery(`
-      CREATE TABLE IF NOT EXISTS site_settings (
-        setting_key VARCHAR(100) PRIMARY KEY,
-        setting_value LONGTEXT NOT NULL
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-    `);
-
-    // 2. Modify the column to LONGTEXT in case the table already existed with TEXT type
-    await executeQuery(
-      "ALTER TABLE site_settings MODIFY COLUMN setting_value LONGTEXT NOT NULL"
-    );
-    isTableSchemaVerified = true;
-  } catch (err) {
-    console.warn("Settings Lib: Failed to ensure table schema and modify column to LONGTEXT:", err);
-  }
-}
-
-/**
- * Gets the current primary color settings.
- * Attemps querying MySQL first, falling back to the settings.json file.
- */
-export async function getSiteSettings(): Promise<SiteSettings> {
+async function getSiteSettingsRaw(): Promise<SiteSettings> {
   if (isDbConfigured()) {
     try {
-      await ensureTableExistsAndSchemaUpdated();
       const rows = await executeQuery<any[]>(
         "SELECT setting_key, setting_value FROM site_settings"
       );
       if (rows && rows.length > 0) {
-        const settings: Partial<SiteSettings> = {};
+        const settings: Partial<SiteSettings> & { contactInfo?: any } = {};
         for (const row of rows) {
           if (row.setting_key === "primaryColor") {
             settings.primaryColor = row.setting_value;
           } else if (row.setting_key === "primaryColorHover") {
             settings.primaryColorHover = row.setting_value;
+          } else if (row.setting_key.startsWith("contact_")) {
+            if (!settings.contactInfo) settings.contactInfo = {};
+            if (row.setting_key === "contact_address_en") settings.contactInfo.addressEn = row.setting_value;
+            if (row.setting_key === "contact_address_bn") settings.contactInfo.addressBn = row.setting_value;
+            if (row.setting_key === "contact_factory_address_en") settings.contactInfo.factoryAddressEn = row.setting_value;
+            if (row.setting_key === "contact_factory_address_bn") settings.contactInfo.factoryAddressBn = row.setting_value;
+            if (row.setting_key === "contact_email") settings.contactInfo.email = row.setting_value;
+            if (row.setting_key === "contact_email2") settings.contactInfo.email2 = row.setting_value;
+            if (row.setting_key === "contact_phone") settings.contactInfo.phone = row.setting_value;
+            if (row.setting_key === "contact_phone2") settings.contactInfo.phone2 = row.setting_value;
+            if (row.setting_key === "contact_whatsapp") settings.contactInfo.whatsapp = row.setting_value;
           } else if (row.setting_key === "scrollingTexts") {
             try {
               settings.scrollingTexts = JSON.parse(row.setting_value);
@@ -306,26 +269,17 @@ export async function getSiteSettings(): Promise<SiteSettings> {
               settings.policies = JSON.parse(row.setting_value);
             } catch (e) {
               console.error("Failed to parse policies setting, attempting local fallback:", e);
-              // Attempt to recover the full policies content from local settings.json which wasn't truncated
-              try {
-                if (fs.existsSync(settingsFilePath)) {
-                  const fileContent = fs.readFileSync(settingsFilePath, "utf8");
-                  const parsed = JSON.parse(fileContent);
-                  if (parsed.policies) {
-                    settings.policies = parsed.policies;
-                    
-                    // Asynchronously repair database record since column has now been expanded to LONGTEXT
-                    console.log("Self-healing: Rewriting policies back to DB from local file fallback...");
-                    const serialized = JSON.stringify(parsed.policies);
-                    executeQuery(
-                      "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-                      ["policies", serialized, serialized]
-                    ).catch(dbErr => console.error("Self-heal: Failed to save back to DB:", dbErr));
-                  }
+              fs.readFile(settingsFilePath, "utf8").then((fileContent) => {
+                const parsed = JSON.parse(fileContent);
+                if (parsed.policies) {
+                  settings.policies = parsed.policies;
+                  const serialized = JSON.stringify(parsed.policies);
+                  return executeQuery(
+                    "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
+                    ["policies", serialized, serialized]
+                  );
                 }
-              } catch (fileErr) {
-                console.error("Failed to load policies fallback from settings.json:", fileErr);
-              }
+              }).catch(fileErr => console.error("Self-heal: Failed to save back to DB:", fileErr));
             }
           } else if (row.setting_key === "welcomeModal") {
             try {
@@ -350,13 +304,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
         if (settings.primaryColor && settings.primaryColorHover) {
           if (!settings.scrollingTexts) {
             try {
-              if (fs.existsSync(settingsFilePath)) {
-                const content = fs.readFileSync(settingsFilePath, "utf8");
-                const parsed = JSON.parse(content);
-                settings.scrollingTexts = parsed.scrollingTexts || UNIQUE_DEFAULT_SCROLLING_TEXTS;
-              } else {
-                settings.scrollingTexts = UNIQUE_DEFAULT_SCROLLING_TEXTS;
-              }
+              const content = await fs.readFile(settingsFilePath, "utf8");
+              const parsed = JSON.parse(content);
+              settings.scrollingTexts = parsed.scrollingTexts || UNIQUE_DEFAULT_SCROLLING_TEXTS;
             } catch (err) {
               settings.scrollingTexts = UNIQUE_DEFAULT_SCROLLING_TEXTS;
             }
@@ -390,13 +340,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
           }
           if (!settings.policies) {
             try {
-              if (fs.existsSync(settingsFilePath)) {
-                const fileContent = fs.readFileSync(settingsFilePath, "utf8");
-                const parsed = JSON.parse(fileContent);
-                settings.policies = parsed.policies || DEFAULT_SETTINGS.policies;
-              } else {
-                settings.policies = DEFAULT_SETTINGS.policies;
-              }
+              const fileContent = await fs.readFile(settingsFilePath, "utf8");
+              const parsed = JSON.parse(fileContent);
+              settings.policies = parsed.policies || DEFAULT_SETTINGS.policies;
             } catch (err) {
               settings.policies = DEFAULT_SETTINGS.policies;
             }
@@ -410,6 +356,17 @@ export async function getSiteSettings(): Promise<SiteSettings> {
           if (!settings.brandBanner) {
             settings.brandBanner = DEFAULT_SETTINGS.brandBanner;
           }
+          
+          if (!settings.contactInfo) {
+            try {
+              const contactPath = path.join(process.cwd(), "src/data/contactInfo.json");
+              const contactContent = await fs.readFile(contactPath, "utf8");
+              settings.contactInfo = JSON.parse(contactContent);
+            } catch (e) {
+              console.error("Settings Lib: Failed to load fallback contact details inside DB settings mapping:", e);
+            }
+          }
+
           return settings as SiteSettings;
         }
       }
@@ -420,28 +377,37 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
   // Fallback to static JSON file
   try {
-    if (fs.existsSync(settingsFilePath)) {
-      const content = fs.readFileSync(settingsFilePath, "utf8");
-      const parsed = JSON.parse(content);
-      return {
-        primaryColor: parsed.primaryColor || DEFAULT_SETTINGS.primaryColor,
-        primaryColorHover: parsed.primaryColorHover || DEFAULT_SETTINGS.primaryColorHover,
-        scrollingTexts: parsed.scrollingTexts || UNIQUE_DEFAULT_SCROLLING_TEXTS,
-        logoPath: parsed.logoPath || DEFAULT_SETTINGS.logoPath,
-        faviconPath: parsed.faviconPath || DEFAULT_SETTINGS.faviconPath,
-        contactCTAImagePath: parsed.contactCTAImagePath || DEFAULT_SETTINGS.contactCTAImagePath,
-        brandBannerSlogan: parsed.brandBannerSlogan || DEFAULT_SETTINGS.brandBannerSlogan,
-        socialLinks: parsed.socialLinks || DEFAULT_SETTINGS.socialLinks,
-        googleMapsEmbedUrl: parsed.googleMapsEmbedUrl || DEFAULT_SETTINGS.googleMapsEmbedUrl,
-        aboutIntro: parsed.aboutIntro || DEFAULT_SETTINGS.aboutIntro,
-        aboutImagePath: parsed.aboutImagePath || DEFAULT_SETTINGS.aboutImagePath,
-        missionVision: parsed.missionVision || DEFAULT_SETTINGS.missionVision,
-        policies: parsed.policies || DEFAULT_SETTINGS.policies,
-        welcomeModal: parsed.welcomeModal || DEFAULT_SETTINGS.welcomeModal,
-        brandIntro: parsed.brandIntro || DEFAULT_SETTINGS.brandIntro,
-        brandBanner: parsed.brandBanner || DEFAULT_SETTINGS.brandBanner,
-      };
+    const content = await fs.readFile(settingsFilePath, "utf8");
+    const parsed = JSON.parse(content);
+    
+    let contactInfoFallback = null;
+    try {
+      const contactPath = path.join(process.cwd(), "src/data/contactInfo.json");
+      const contactContent = await fs.readFile(contactPath, "utf8");
+      contactInfoFallback = JSON.parse(contactContent);
+    } catch (e) {
+      console.error("Settings Lib: Failed to read fallback contactInfo.json:", e);
     }
+
+    return {
+      primaryColor: parsed.primaryColor || DEFAULT_SETTINGS.primaryColor,
+      primaryColorHover: parsed.primaryColorHover || DEFAULT_SETTINGS.primaryColorHover,
+      scrollingTexts: parsed.scrollingTexts || UNIQUE_DEFAULT_SCROLLING_TEXTS,
+      logoPath: parsed.logoPath || DEFAULT_SETTINGS.logoPath,
+      faviconPath: parsed.faviconPath || DEFAULT_SETTINGS.faviconPath,
+      contactCTAImagePath: parsed.contactCTAImagePath || DEFAULT_SETTINGS.contactCTAImagePath,
+      brandBannerSlogan: parsed.brandBannerSlogan || DEFAULT_SETTINGS.brandBannerSlogan,
+      socialLinks: parsed.socialLinks || DEFAULT_SETTINGS.socialLinks,
+      googleMapsEmbedUrl: parsed.googleMapsEmbedUrl || DEFAULT_SETTINGS.googleMapsEmbedUrl,
+      aboutIntro: parsed.aboutIntro || DEFAULT_SETTINGS.aboutIntro,
+      aboutImagePath: parsed.aboutImagePath || DEFAULT_SETTINGS.aboutImagePath,
+      missionVision: parsed.missionVision || DEFAULT_SETTINGS.missionVision,
+      policies: parsed.policies || DEFAULT_SETTINGS.policies,
+      welcomeModal: parsed.welcomeModal || DEFAULT_SETTINGS.welcomeModal,
+      brandIntro: parsed.brandIntro || DEFAULT_SETTINGS.brandIntro,
+      brandBanner: parsed.brandBanner || DEFAULT_SETTINGS.brandBanner,
+      contactInfo: contactInfoFallback,
+    };
   } catch (fileErr) {
     console.error("Settings Lib: Failed to read local settings file:", fileErr);
   }
@@ -450,133 +416,151 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 }
 
 /**
+ * Gets the cached site settings.
+ */
+export const getSiteSettings = unstable_cache(
+  async (): Promise<SiteSettings> => {
+    return getSiteSettingsRaw();
+  },
+  ["site-settings-cache-key"],
+  { tags: ["settings"], revalidate: 300 }
+);
+
+/**
  * Saves and updates the primary color settings.
- * Synchronizes with database and writes directly to local settings.json.
+ * Synchronizes with database in a single batch query (fixing N+1 queries) and writes directly to local settings.json asynchronously.
  */
 export async function updateSiteSettings(settings: SiteSettings): Promise<boolean> {
   let dbSuccess = false;
 
   if (isDbConfigured()) {
     try {
-      await ensureTableExistsAndSchemaUpdated();
+      const entries: [string, string][] = [
+        ["primaryColor", settings.primaryColor],
+        ["primaryColorHover", settings.primaryColorHover]
+      ];
 
-      await executeQuery(
-        "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-        ["primaryColor", settings.primaryColor, settings.primaryColor]
-      );
-      await executeQuery(
-        "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-        ["primaryColorHover", settings.primaryColorHover, settings.primaryColorHover]
-      );
-      if (settings.scrollingTexts) {
-        const serialized = JSON.stringify(settings.scrollingTexts);
-        await executeQuery(
-          "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-          ["scrollingTexts", serialized, serialized]
-        );
-      }
-      if (settings.logoPath) {
-        await executeQuery(
-          "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-          ["logoPath", settings.logoPath, settings.logoPath]
-        );
-      }
-      if (settings.faviconPath) {
-        await executeQuery(
-          "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-          ["faviconPath", settings.faviconPath, settings.faviconPath]
-        );
-      }
-      if (settings.contactCTAImagePath) {
-        await executeQuery(
-          "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-          ["contactCTAImagePath", settings.contactCTAImagePath, settings.contactCTAImagePath]
-        );
-      }
-      if (settings.brandBannerSlogan) {
-        const serializedSlogan = JSON.stringify(settings.brandBannerSlogan);
-        await executeQuery(
-          "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-          ["brandBannerSlogan", serializedSlogan, serializedSlogan]
-        );
-      }
-      if (settings.socialLinks) {
-        const serializedSocials = JSON.stringify(settings.socialLinks);
-        await executeQuery(
-          "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-          ["socialLinks", serializedSocials, serializedSocials]
-        );
-      }
-      if (settings.googleMapsEmbedUrl) {
-        await executeQuery(
-          "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-          ["googleMapsEmbedUrl", settings.googleMapsEmbedUrl, settings.googleMapsEmbedUrl]
-        );
-      }
-      if (settings.aboutIntro) {
-        const serializedAboutIntro = JSON.stringify(settings.aboutIntro);
-        await executeQuery(
-          "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-          ["aboutIntro", serializedAboutIntro, serializedAboutIntro]
-        );
-      }
-      if (settings.aboutImagePath) {
-        await executeQuery(
-          "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-          ["aboutImagePath", settings.aboutImagePath, settings.aboutImagePath]
-        );
-      }
-      if (settings.missionVision) {
-        const serializedMV = JSON.stringify(settings.missionVision);
-        await executeQuery(
-          "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-          ["missionVision", serializedMV, serializedMV]
-        );
-      }
-      if (settings.policies) {
-        const serializedPolicies = JSON.stringify(settings.policies);
-        await executeQuery(
-          "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-          ["policies", serializedPolicies, serializedPolicies]
-        );
-      }
-      if (settings.welcomeModal) {
-        const serializedWelcomeModal = JSON.stringify(settings.welcomeModal);
-        await executeQuery(
-          "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-          ["welcomeModal", serializedWelcomeModal, serializedWelcomeModal]
-        );
-      }
-      if (settings.brandIntro) {
-        const serializedBrandIntro = JSON.stringify(settings.brandIntro);
-        await executeQuery(
-          "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-          ["brandIntro", serializedBrandIntro, serializedBrandIntro]
-        );
-      }
-      if (settings.brandBanner) {
-        const serializedBrandBanner = JSON.stringify(settings.brandBanner);
-        await executeQuery(
-          "INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-          ["brandBanner", serializedBrandBanner, serializedBrandBanner]
-        );
-      }
+      if (settings.scrollingTexts) entries.push(["scrollingTexts", JSON.stringify(settings.scrollingTexts)]);
+      if (settings.logoPath) entries.push(["logoPath", settings.logoPath]);
+      if (settings.faviconPath) entries.push(["faviconPath", settings.faviconPath]);
+      if (settings.contactCTAImagePath) entries.push(["contactCTAImagePath", settings.contactCTAImagePath]);
+      if (settings.brandBannerSlogan) entries.push(["brandBannerSlogan", JSON.stringify(settings.brandBannerSlogan)]);
+      if (settings.socialLinks) entries.push(["socialLinks", JSON.stringify(settings.socialLinks)]);
+      if (settings.googleMapsEmbedUrl) entries.push(["googleMapsEmbedUrl", settings.googleMapsEmbedUrl]);
+      if (settings.aboutIntro) entries.push(["aboutIntro", JSON.stringify(settings.aboutIntro)]);
+      if (settings.aboutImagePath) entries.push(["aboutImagePath", settings.aboutImagePath]);
+      if (settings.missionVision) entries.push(["missionVision", JSON.stringify(settings.missionVision)]);
+      if (settings.policies) entries.push(["policies", JSON.stringify(settings.policies)]);
+      if (settings.welcomeModal) entries.push(["welcomeModal", JSON.stringify(settings.welcomeModal)]);
+      if (settings.brandIntro) entries.push(["brandIntro", JSON.stringify(settings.brandIntro)]);
+      if (settings.brandBanner) entries.push(["brandBanner", JSON.stringify(settings.brandBanner)]);
+
+      const placeholders = entries.map(() => "(?, ?)").join(", ");
+      const sql = `INSERT INTO site_settings (setting_key, setting_value) VALUES ${placeholders} ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)`;
+      const params = entries.flat();
+
+      await executeQuery(sql, params);
       dbSuccess = true;
     } catch (dbErr) {
       console.error("Settings Lib: Failed to save settings to DB:", dbErr);
     }
   }
 
-  // Always write to fallback JSON file to remain in sync
+  // Always write to fallback JSON file to remain in sync asynchronously
   try {
     const dir = path.dirname(settingsFilePath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(settingsFilePath, JSON.stringify(settings, null, 2), "utf8");
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(settingsFilePath, JSON.stringify(settings, null, 2), "utf8");
   } catch (fileErr) {
     console.error("Settings Lib: Failed to write local settings file:", fileErr);
   }
 
   return dbSuccess;
 }
+
+export interface HeroSlide {
+  id: string | number;
+  imagePath: string;
+  badge: { en: string; bn: string };
+  title: { en: string; bn: string };
+  description: { en: string; bn: string };
+}
+
+/**
+ * RAW: Fetches all hero slides from MySQL (bypassing cache layer).
+ */
+async function getDbHeroSlidesRaw(): Promise<HeroSlide[]> {
+  const DEFAULT_SLIDES: HeroSlide[] = [
+    {
+      id: 1,
+      imagePath: "/images/Transformer1.1.png",
+      badge: { en: "High Efficiency & High Performance", bn: "উচ্চ দক্ষতা ও উচ্চ কার্যক্ষমতা" },
+      title: { en: "Power & Distribution Transformers", bn: "পাওয়ার ও ডিস্ট্রিবিউশন ট্রান্সফরমার" },
+      description: { en: "We provide quality with years of experience and our expert team.", bn: "আমরা দীর্ঘ বছরের অভিজ্ঞতা এবং আমাদের বিশেষজ্ঞ দলের সাথে মানসম্পন্ন সেবা প্রদান করি।" }
+    },
+    {
+      id: 2,
+      imagePath: "/images/Transformer2.1.png",
+      badge: { en: "Innovative Energy Solutions", bn: "উদ্ভাবনী শক্তি সমাধান" },
+      title: { en: "Electric Switchgear Systems", bn: "বৈদ্যুতিক সুইচগিয়ার সিস্টেম" },
+      description: { en: "Ensuring ultimate grid security and reliable distribution controls.", bn: "সর্বোচ্চ গ্রিড নিরাপত্তা এবং নির্ভরযোগ্য বন্টন নিয়ন্ত্রণ নিশ্চিত করা।" }
+    },
+    {
+      id: 3,
+      imagePath: "/images/Transformer3.1.png",
+      badge: { en: "Sustainable Power Delivery", bn: "টেকসই শক্তি সরবরাহ" },
+      title: { en: "Dry-Type Transformer Technologies", bn: "ড্রাই-টাইপ ট্রান্সফরমার প্রযুক্তি" },
+      description: { en: "Safe, eco-friendly, and modern electricity conversion for industrial infrastructure.", bn: "শিল্প অবকাঠামোর জন্য নিরাপদ, পরিবেশ-বান্ধব এবং আধুনিক বিদ্যুৎ রূপান্তর।" }
+    }
+  ];
+
+  if (isDbConfigured()) {
+    try {
+      const rows = await executeQuery<any[]>(
+        "SELECT * FROM hero_slides ORDER BY order_index ASC, id ASC"
+      );
+      if (rows && rows.length > 0) {
+        return rows.map((row) => ({
+          id: row.id,
+          imagePath: row.image_path,
+          badge: { en: row.badge_en || "", bn: row.badge_bn || "" },
+          title: { en: row.title_en || "", bn: row.title_bn || "" },
+          description: { en: row.description_en || "", bn: row.description_bn || "" },
+        }));
+      }
+    } catch (err) {
+      console.warn("Settings Lib: Failed to query hero_slides from DB, falling back to defaults.", err);
+    }
+  }
+
+  // Fallback to local hero_slides.json file asynchronously
+  try {
+    const fallbackPath = path.join(process.cwd(), "src/data/hero_slides.json");
+    const data = await fs.readFile(fallbackPath, "utf-8");
+    const parsed = JSON.parse(data);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed.map((s: any) => ({
+        id: s.id,
+        imagePath: s.image_path || s.imagePath || "",
+        badge: { en: s.badge_en || s.badge?.en || "", bn: s.badge_bn || s.badge?.bn || "" },
+        title: { en: s.title_en || s.title?.en || "", bn: s.title_bn || s.title?.bn || "" },
+        description: { en: s.description_en || s.description?.en || "", bn: s.description_bn || s.description?.bn || "" },
+      }));
+    }
+  } catch (err) {
+    console.error("Settings Lib: Failed to read local hero slides file fallback:", err);
+  }
+
+  return DEFAULT_SLIDES;
+}
+
+/**
+ * Gets the cached hero slides list.
+ */
+export const getDbHeroSlides = unstable_cache(
+  async (): Promise<HeroSlide[]> => {
+    return getDbHeroSlidesRaw();
+  },
+  ["hero-slides-cache-key"],
+  { tags: ["hero_slides"], revalidate: 300 }
+);

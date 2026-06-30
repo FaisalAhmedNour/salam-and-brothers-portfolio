@@ -3,7 +3,7 @@ import { executeQuery, isDbConfigured } from "@/lib/db";
 import { getSiteSettings, updateSiteSettings, darkenColor } from "@/lib/settings";
 import crypto from "crypto";
 import { cookies } from "next/headers";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 /**
  * Shared helper to verify if the current user is authenticated as administrator.
@@ -130,9 +130,11 @@ export async function POST(request: Request) {
 
       const isDbSaved = await updateSiteSettings(updatedSettings);
 
-      // Revalidate layout path so static pages are regenerated on-demand
+      // Revalidate layout path and cached settings tags so static pages are regenerated on-demand
       try {
         revalidatePath("/", "layout");
+        revalidateTag("settings", "max");
+        revalidateTag("hero_slides", "max");
       } catch (revalErr) {
         console.warn("Failed to revalidate layout path cache:", revalErr);
       }

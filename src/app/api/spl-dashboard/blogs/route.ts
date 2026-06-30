@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { executeQuery, isDbConfigured } from "@/lib/db";
 import { cookies } from "next/headers";
-import fs from "fs";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { promises as fs } from "fs";
 import path from "path";
 
 /**
@@ -15,25 +16,26 @@ async function checkAuth(): Promise<boolean> {
 
 const localJsonPath = path.join(process.cwd(), "src/data/blogs.json");
 
-function readFallbackJson(): any[] {
+/**
+ * Read blogs fallback JSON file asynchronously.
+ */
+async function readFallbackJson(): Promise<any[]> {
   try {
-    if (fs.existsSync(localJsonPath)) {
-      const data = fs.readFileSync(localJsonPath, "utf-8");
-      return JSON.parse(data);
-    }
+    const data = await fs.readFile(localJsonPath, "utf-8");
+    return JSON.parse(data);
   } catch (err) {
-    console.error("Failed to read fallback blogs.json:", err);
+    return [];
   }
-  return [];
 }
 
-function writeFallbackJson(data: any[]) {
+/**
+ * Write blogs fallback JSON file asynchronously.
+ */
+async function writeFallbackJson(data: any[]) {
   try {
     const dir = path.dirname(localJsonPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(localJsonPath, JSON.stringify(data, null, 2), "utf-8");
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(localJsonPath, JSON.stringify(data, null, 2), "utf-8");
   } catch (err) {
     console.error("Failed to write fallback blogs.json:", err);
   }
@@ -71,7 +73,7 @@ export async function GET() {
   }
 
   // Fallback to static JSON
-  const fallbackBlogs = readFallbackJson().map((b) => ({
+  const fallbackBlogs = (await readFallbackJson()).map((b) => ({
     id: b.id,
     publishDate: b.publishDate,
     authorEn: b.authorEn,
@@ -131,7 +133,7 @@ export async function POST(request: Request) {
     }
 
     // Always update fallback JSON file
-    const currentFallback = readFallbackJson();
+    const currentFallback = await readFallbackJson();
     const newBlogJson = {
       id,
       publishDate,
@@ -149,7 +151,14 @@ export async function POST(request: Request) {
       contentBn: contentBn || "",
     };
     currentFallback.unshift(newBlogJson); // Prepend newest first
-    writeFallbackJson(currentFallback);
+    await writeFallbackJson(currentFallback);
+
+    // Purge ISR page caches and tags on modifications
+    revalidatePath("/blog");
+    revalidatePath("/blog/[id]");
+    revalidatePath("/");
+    revalidateTag("blogs", "max");
+    revalidatePath("/", "layout");
 
     return NextResponse.json({ success: true, message: "Blog post created successfully." }, { status: 200 });
   } catch (error) {
@@ -200,7 +209,7 @@ export async function PUT(request: Request) {
     }
 
     // Always update fallback JSON file
-    const currentFallback = readFallbackJson();
+    const currentFallback = await readFallbackJson();
     const updatedFallback = currentFallback.map((b) => {
       if (b.id === id) {
         return {
@@ -222,7 +231,17 @@ export async function PUT(request: Request) {
       }
       return b;
     });
-    writeFallbackJson(updatedFallback);
+    await writeFallbackJson(updatedFallback);
+
+    // Purge ISR page caches and tags on modifications
+    revalidatePath("/blog");
+    if (id) {
+      revalidatePath(`/blog/${id}`);
+    }
+    revalidatePath("/blog/[id]");
+    revalidatePath("/");
+    revalidateTag("blogs", "max");
+    revalidatePath("/", "layout");
 
     return NextResponse.json({ success: true, message: "Blog post updated successfully." }, { status: 200 });
   } catch (error) {
@@ -256,9 +275,16 @@ export async function DELETE(request: Request) {
     }
 
     // Always update fallback JSON file
-    const currentFallback = readFallbackJson();
+    const currentFallback = await readFallbackJson();
     const filteredFallback = currentFallback.filter((b) => b.id !== id);
-    writeFallbackJson(filteredFallback);
+    await writeFallbackJson(filteredFallback);
+
+    // Purge ISR page caches and tags on modifications
+    revalidatePath("/blog");
+    revalidatePath("/blog/[id]");
+    revalidatePath("/");
+    revalidateTag("blogs", "max");
+    revalidatePath("/", "layout");
 
     return NextResponse.json({ success: true, message: "Blog post deleted successfully." }, { status: 200 });
   } catch (error) {

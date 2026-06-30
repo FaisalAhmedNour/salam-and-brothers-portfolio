@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
@@ -77,6 +78,31 @@ export default function Footer() {
   const { t, logoPath, language } = useLanguage();
   const pathname = usePathname();
   const isHome = pathname === "/";
+
+  // Pre-load state with static mock/initial products so we show content instantly
+  const [products, setProducts] = useState<any[]>([
+    { slug: "distribution-transformers", title: { en: "Distribution Transformers", bn: "ডিস্ট্রিবিউশন ট্রান্সফরমার" } },
+    { slug: "power-transformers", title: { en: "Power Transformers", bn: "পাওয়ার ট্রান্সফরমার" } },
+    { slug: "special-type-transformers", title: { en: "Special Type Transformers", bn: "স্পেশাল টাইপ ট্রান্সফরমার" } },
+    { slug: "dry-type-transformers", title: { en: "Dry-Type Transformers", bn: "ড্রাই-টাইপ ট্রান্সফরমার" } }
+  ]);
+
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        const res = await fetch("/api/public/products");
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setProducts(data.slice(0, 4));
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to load footer products dynamic list:", err);
+      }
+    }
+    loadProducts();
+  }, []);
 
   // Hide public footer on dashboard routes
   if (pathname?.startsWith("/spl-dashboard")) {
@@ -167,14 +193,16 @@ export default function Footer() {
                 {t("footer.productsHeader")}
               </h4>
               <ul className="space-y-3.5 text-[15px] font-medium text-neutral-600">
-                <li className="underline font-semibold"><a href="/products/distribution-transformers" className="hover:text-brand-red transition-colors">{t("nav.distributionTransformers")}</a></li>
-                <li className="underline font-semibold"><a href="/products/power-transformers" className="hover:text-brand-red transition-colors">{t("nav.powerTransformers")}</a></li>
-                <li className="underline font-semibold"><a href="/products/special-type-transformers" className="hover:text-brand-red transition-colors">{t("nav.specialTypeTransformers")}</a></li>
-                <li className="underline font-semibold"><a href="/products/dry-type-transformers" className="hover:text-brand-red transition-colors">{t("nav.dryTypeTransformers")}</a></li>
-                {/* <li className="underline font-semibold"><a href="/products/lovol-diesel-generator" className="hover:text-brand-red transition-colors">{t("nav.lovolDiselGenerator")}</a></li>
-                <li className="underline font-semibold"><a href="/products/electric-switchgear" className="hover:text-brand-red transition-colors">{t("nav.electricSwitchgear")}</a></li>
-                <li className="underline font-semibold"><a href="/products/bbt-bus-bar-trunking" className="hover:text-brand-red transition-colors">{t("nav.bbtBusBarTrunkingSystem")}</a></li>
-                <li className="underline font-semibold"><a href="/products/renewable-energy" className="hover:text-brand-red transition-colors">{t("nav.renewableEnergy")}</a></li> */}
+                {products.map((p) => {
+                  const title = language === "bn" ? (p.title?.bn || p.title?.en) : p.title?.en;
+                  return (
+                    <li key={p.slug} className="underline font-semibold">
+                      <a href={`/products/${p.slug}`} className="hover:text-brand-red transition-colors">
+                        {title}
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 
