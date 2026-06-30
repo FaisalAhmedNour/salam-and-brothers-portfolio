@@ -124,7 +124,7 @@ export default function NoticesPage() {
   // Filtering and search state
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  
+
   // Notice detail expansion state
   const [expandedNoticeId, setExpandedNoticeId] = useState<string | null>(null);
 
@@ -209,7 +209,7 @@ export default function NoticesPage() {
       {/* Main Container Section */}
       <section className="py-12 px-6">
         <div className="mx-auto max-w-310">
-          
+
           {/* Controls Bar: Search & Category Tabs */}
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between mb-10 bg-white p-5 rounded-2xl border border-neutral-100 shadow-sm">
             {/* Real-time search bar */}
@@ -263,7 +263,7 @@ export default function NoticesPage() {
             </div>
           ) : (
             <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
-              
+
               {/* Desktop Table View Layout */}
               <div className="hidden md:block">
                 <table className="w-full border-collapse text-left">
@@ -424,11 +424,11 @@ export default function NoticesPage() {
                                 {text.btnView}
                               </button>
                               <button
-                                        onClick={() => handleDownloadFile(file.url, activeLang === "bn" ? file.nameBn : file.nameEn)}
-                                        className="px-3.5 py-2 text-[12px] font-semibold bg-neutral-800 text-white rounded-lg hover:bg-neutral-900 shadow-md transition-colors cursor-pointer"
-                                      >
-                                        {text.btnDownload}
-                                      </button>
+                                onClick={() => handleDownloadFile(file.url, activeLang === "bn" ? file.nameBn : file.nameEn)}
+                                className="px-3.5 py-2 text-[12px] font-semibold bg-neutral-800 text-white rounded-lg hover:bg-neutral-900 shadow-md transition-colors cursor-pointer"
+                              >
+                                {text.btnDownload}
+                              </button>
                             </div>
                           </div>
                         ))}
@@ -446,9 +446,9 @@ export default function NoticesPage() {
 
       {/* PDF Document Simulator Preview Modal */}
       {previewFile && previewNotice && (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+        <div className="fixed inset-0 z-10000 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
           <div className="relative w-full max-w-4xl max-h-[90vh] bg-neutral-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-neutral-700">
-            
+
             {/* Modal Header Panel */}
             <div className="flex items-center justify-between px-6 py-4 bg-neutral-900 border-b border-neutral-700 text-white shrink-0">
               <div>
@@ -503,7 +503,7 @@ export default function NoticesPage() {
               ) : (
                 /* Fallback simulated letterhead paper notice design */
                 <div className="w-full max-w-2xl bg-white text-black p-8 md:p-12 shadow-2xl relative border border-neutral-100 min-h-[70vh] flex flex-col justify-between font-montserrat">
-                  
+
                   {/* Simulated Stamp Badge (Visual Details) */}
                   <div className="absolute top-8 right-8 border-4 border-dashed border-red-500/20 text-red-500/20 text-[13px] font-extrabold uppercase p-2 pointer-events-none tracking-widest select-none rounded-md">
                     {text.mockStamp}
@@ -556,7 +556,7 @@ export default function NoticesPage() {
                         </span>
                       </div>
                       <div className="h-[1.5px] w-48 bg-neutral-400 ml-auto" />
-                      
+
                       <h4 className="font-bold text-[14px] text-neutral-900 pt-1 leading-none">
                         {activeLang === "bn" ? previewNotice.signatoryBn : previewNotice.signatoryEn}
                       </h4>

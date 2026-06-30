@@ -64,7 +64,7 @@ export function getDbPool(): mysql.Pool | null {
   if (!isDbConfigured()) {
     return null;
   }
-  console.log('dbConfig', dbConfig);
+  // console.log('dbConfig', dbConfig);
   if (!pool) {
     pool = mysql.createPool(dbConfig);
   }
