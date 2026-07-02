@@ -70,7 +70,8 @@ export interface SiteSettings {
   welcomeModal?: {
     active: boolean;
     imagePath: string;
-    suppressionDays: number;
+    suppressionDays?: number; // @deprecated
+    maxShowCount: number;
   };
   brandIntro?: {
     subtitleEn: string;
@@ -177,7 +178,8 @@ const DEFAULT_SETTINGS: SiteSettings = {
   welcomeModal: {
     active: false,
     imagePath: "",
-    suppressionDays: 1,
+    suppressionDays: 1, // @deprecated
+    maxShowCount: 5,
   },
   brandIntro: {
     subtitleEn: "SEECO Transformer",

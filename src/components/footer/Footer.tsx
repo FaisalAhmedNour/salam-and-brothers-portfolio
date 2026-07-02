@@ -22,6 +22,7 @@ const SHIPPING_DESTINATIONS: GlobalShippingLocation[] = [
   { name: "Mymensingh", top: 33, left: 46 },
   { name: "Rajshahi", top: 36, left: 27 },
   { name: "Cumilla", top: 55, left: 53 },
+  { name: "Noakhali", top: 63, left: 53 },
   { name: "Chattogram", top: 66, left: 61 },
   { name: "Cox's Bazar", top: 77, left: 62 },
   { name: "Khulna", top: 65, left: 34 },
@@ -70,6 +71,26 @@ function FooterPhoneIcon() {
 }
 
 /**
+ * Calculates the dynamic copyright year range based on the current date.
+ * If the month is Jan-Jun (0-5), the range is (currentYear - 1) to currentYear.
+ * If the month is Jul-Dec (6-11), the range is currentYear to (currentYear + 1).
+ *
+ * @returns {string} The formatted copyright year range string.
+ */
+function calculateCopyrightYearRange(): string {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth(); // 0-indexed month (Jan = 0, Dec = 11)
+
+  // January (0) to June (5)
+  if (currentMonth >= 0 && currentMonth <= 5) {
+    return `${currentYear - 1}-${currentYear}`;
+  }
+  // July (6) to December (11)
+  return `${currentYear}-${currentYear + 1}`;
+}
+
+/**
  * Footer Component.
  * Contains site links, support policies, company info,
  * and a fully animated SVG global shipping destination map.
@@ -87,7 +108,13 @@ export default function Footer() {
     { slug: "dry-type-transformers", title: { en: "Dry-Type Transformers", bn: "ড্রাই-টাইপ ট্রান্সফরমার" } }
   ]);
 
+  // State to hold the dynamically calculated copyright year range, initialized with a fallback to avoid SSR hydration mismatch
+  const [copyrightYear, setCopyrightYear] = useState<string>("2025-2026");
+
   useEffect(() => {
+    // Dynamically calculate and set the copyright year range on mount to prevent SSR hydration mismatch
+    setCopyrightYear(calculateCopyrightYearRange());
+
     async function loadProducts() {
       try {
         const res = await fetch("/api/public/products");
@@ -441,8 +468,8 @@ export default function Footer() {
 
         {/* Copywrite notice footer bar */}
         <div className="flex justify-center pt-5 text-gray-500 gap-4">
-          <p>© 2025-2026 Created JAASBD | Seeco Power Limited</p>
-          {/* <p>© 2025-2026 Turkish Transformer. All Rights Reserved.</p> */}
+          <p>© {copyrightYear} Seeco Power Limited. All Rights Reserved. | Developed by JAASBD</p>
+          {/* <p>© 2025-2026 Turkish Transformer. .</p> */}
           {/* <p>
             Created by{" "}
             <a href="https://pixelexa.com/" target="_blank" rel="noopener" className="font-semibold text-brand-red hover:underline">

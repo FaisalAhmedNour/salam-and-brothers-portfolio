@@ -117,7 +117,7 @@
   "welcomeModal": {
     "active": true,
     "imagePath": "https://seecopowerlimited.com/uploads/seecoi1-1782606096146.png",
-    "suppressionDays": 30
+    "maxShowCount": 5
   },
   "brandIntro": {
     "subtitleEn": "SEECO Transformer",

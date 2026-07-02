@@ -99,10 +99,9 @@ export default function DashboardSettings() {
   const [socialError, setSocialError] = useState("");
   const [socialLoading, setSocialLoading] = useState(false);
 
-  // Welcome Modal state
   const [welcomeActive, setWelcomeActive] = useState(false);
   const [welcomeImagePath, setWelcomeImagePath] = useState("");
-  const [welcomeSuppressionDays, setWelcomeSuppressionDays] = useState(1);
+  const [welcomeMaxShowCount, setWelcomeMaxShowCount] = useState(5);
   const [welcomeMessage, setWelcomeMessage] = useState("");
   const [welcomeError, setWelcomeError] = useState("");
   const [welcomeLoading, setWelcomeLoading] = useState(false);
@@ -175,7 +174,7 @@ export default function DashboardSettings() {
             if (data.siteSettings.welcomeModal) {
               setWelcomeActive(data.siteSettings.welcomeModal.active || false);
               setWelcomeImagePath(data.siteSettings.welcomeModal.imagePath || "");
-              setWelcomeSuppressionDays(data.siteSettings.welcomeModal.suppressionDays || 1);
+              setWelcomeMaxShowCount(data.siteSettings.welcomeModal.maxShowCount || 5);
             }
             if (data.siteSettings.brandIntro) {
               setBrandIntro(data.siteSettings.brandIntro);
@@ -240,7 +239,7 @@ export default function DashboardSettings() {
           welcomeModal: {
             active: welcomeActive,
             imagePath: url,
-            suppressionDays: welcomeSuppressionDays
+            maxShowCount: welcomeMaxShowCount
           }
         };
       }
@@ -453,7 +452,7 @@ export default function DashboardSettings() {
           welcomeModal: {
             active: welcomeActive,
             imagePath: welcomeImagePath,
-            suppressionDays: Number(welcomeSuppressionDays) || 1,
+            maxShowCount: Number(welcomeMaxShowCount) || 5,
           },
         }),
       });
@@ -1304,23 +1303,23 @@ export default function DashboardSettings() {
                 </div>
               </div>
 
-              {/* Days suppression input */}
+              {/* Max show count input */}
               <div className="space-y-2">
                 <label className="text-[10px] font-extrabold uppercase tracking-wider text-dash-text-muted">
-                  Dismiss suppression duration (Days)
+                  Maximum Show Count (Times)
                 </label>
                 <input
                   type="number"
                   min={1}
-                  max={365}
+                  max={100}
                   required
-                  value={welcomeSuppressionDays}
-                  onChange={(e) => setWelcomeSuppressionDays(Number(e.target.value) || 1)}
+                  value={welcomeMaxShowCount}
+                  onChange={(e) => setWelcomeMaxShowCount(Number(e.target.value) || 1)}
                   className="w-full bg-dash-hover-bg/30 border border-dash-border focus:border-brand-red/30 rounded-xl px-4 py-3 text-[14px] focus:outline-hidden text-dash-text font-semibold"
-                  placeholder="e.g. 1"
+                  placeholder="e.g. 5"
                 />
                 <p className="text-[10px] text-dash-text-muted leading-relaxed">
-                  The popup will stay hidden for this number of days for visitors who close it.
+                  The popup will show to each visitor up to this number of times before staying hidden.
                 </p>
               </div>
 

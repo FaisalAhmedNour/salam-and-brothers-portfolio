@@ -1,16 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 
 /**
  * WelcomeModal Component.
  * Displays a configurable welcome notice modal popup to website visitors.
- * Controlled by the admin settings panel (image path, active state, and suppression days).
- * Stores dismissal timestamps in localStorage to respect suppression duration settings.
+ * Controlled by the admin settings panel (image path, active state, and max show count).
+ * Stores show counts in localStorage to respect show count limits.
+ * Resets show counts when the active notice image path changes (new announcement).
  */
 export default function WelcomeModal() {
   const { welcomeModal } = useLanguage();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -23,35 +26,46 @@ export default function WelcomeModal() {
       return;
     }
 
-    // Check localStorage for dismissal suppression
-    const dismissedUntil = localStorage.getItem("welcome_modal_dismissed_until");
-    const now = Date.now();
+    // Do not show on admin dashboard or login pages
+    if (pathname && pathname.startsWith("/spl-dashboard")) {
+      return;
+    }
 
-    if (dismissedUntil) {
-      const expiryTimestamp = Number(dismissedUntil);
-      if (!isNaN(expiryTimestamp) && now < expiryTimestamp) {
-        // Modal is currently suppressed
-        return;
+    // Retrieve the active image and show count from localStorage
+    const currentBannerImage = localStorage.getItem("welcome_modal_banner_image");
+    const showCountStr = localStorage.getItem("welcome_modal_show_count");
+    let currentShowCount = showCountStr ? Number(showCountStr) : 0;
+
+    // Reset show count if the image path has changed (new announcement banner)
+    if (currentBannerImage !== welcomeModal.imagePath) {
+      currentShowCount = 0;
+      try {
+        localStorage.setItem("welcome_modal_banner_image", welcomeModal.imagePath);
+        localStorage.setItem("welcome_modal_show_count", "0");
+      } catch (err) {
+        console.warn("WelcomeModal: Failed to initialize localStorage values:", err);
       }
     }
 
-    // If active and not suppressed, show the modal
+    const maxShowLimit = welcomeModal.maxShowCount || 5;
+
+    if (currentShowCount >= maxShowLimit) {
+      // Modal has reached its maximum show limit for this user
+      return;
+    }
+
+    // If active and limit not reached, show the modal
     setIsOpen(true);
+
+    // Increment and save show count in localStorage
+    try {
+      localStorage.setItem("welcome_modal_show_count", String(currentShowCount + 1));
+    } catch (err) {
+      console.warn("WelcomeModal: Failed to update show count in localStorage:", err);
+    }
   }, [mounted, welcomeModal]);
 
   const handleDismiss = () => {
-    if (!welcomeModal) return;
-
-    // Save suppression timestamp in localStorage
-    const suppressionDays = welcomeModal.suppressionDays || 1;
-    const expiresAt = Date.now() + suppressionDays * 24 * 60 * 60 * 1000;
-    
-    try {
-      localStorage.setItem("welcome_modal_dismissed_until", String(expiresAt));
-    } catch (err) {
-      console.warn("WelcomeModal: Failed to set localStorage suppression:", err);
-    }
-    
     setIsOpen(false);
   };
 

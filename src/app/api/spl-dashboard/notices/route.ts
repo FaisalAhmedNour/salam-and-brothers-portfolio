@@ -1,16 +1,7 @@
 import { NextResponse } from "next/server";
 import { executeQuery } from "@/lib/db";
-import { cookies } from "next/headers";
 import { revalidatePath, revalidateTag } from "next/cache";
-
-/**
- * Shared helper to verify if the current user is authenticated as administrator.
- */
-async function checkAuth(): Promise<boolean> {
-  const cookieStore = await cookies();
-  const session = cookieStore.get("spl_session");
-  return !!(session && session.value === "spl_admin_logged_in");
-}
+import { checkAuth } from "@/lib/auth";
 
 /**
  * GET: retrieve notices + attachment files from DB (dashboard preview).

@@ -35,7 +35,8 @@ interface LanguageContextType {
   welcomeModal?: {
     active: boolean;
     imagePath: string;
-    suppressionDays: number;
+    suppressionDays?: number; // @deprecated
+    maxShowCount: number;
   };
 }
 

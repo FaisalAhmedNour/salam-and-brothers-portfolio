@@ -1,25 +1,8 @@
 import { NextResponse } from "next/server";
 import { executeQuery, isDbConfigured } from "@/lib/db";
 import { getSiteSettings, updateSiteSettings, darkenColor } from "@/lib/settings";
-import crypto from "crypto";
-import { cookies } from "next/headers";
 import { revalidatePath, revalidateTag } from "next/cache";
-
-/**
- * Shared helper to verify if the current user is authenticated as administrator.
- */
-async function checkAuth(): Promise<boolean> {
-  const cookieStore = await cookies();
-  const session = cookieStore.get("spl_session");
-  return !!(session && session.value === "spl_admin_logged_in");
-}
-
-/**
- * SHA-256 hashing helper using Node's native crypto module.
- */
-function hashSha256(text: string): string {
-  return crypto.createHash("sha256").update(text).digest("hex");
-}
+import { checkAuth, hashSha256 } from "@/lib/auth";
 
 /**
  * GET: retrieve health check metrics and env variables configuration parameters.

@@ -1,18 +1,9 @@
 import { NextResponse } from "next/server";
 import { executeQuery, isDbConfigured } from "@/lib/db";
-import { cookies } from "next/headers";
 import { promises as fs } from "fs";
 import path from "path";
 import { revalidateTag, revalidatePath } from "next/cache";
-
-/**
- * Shared helper to verify if the current user is authenticated as administrator.
- */
-async function checkAuth(): Promise<boolean> {
-  const cookieStore = await cookies();
-  const session = cookieStore.get("spl_session");
-  return !!(session && session.value === "spl_admin_logged_in");
-}
+import { checkAuth } from "@/lib/auth";
 
 const itemsJsonPath = path.join(process.cwd(), "src/data/services.json");
 const settingsJsonPath = path.join(process.cwd(), "src/data/servicesSettings.json");

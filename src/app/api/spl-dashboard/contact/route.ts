@@ -1,17 +1,8 @@
 import { NextResponse } from "next/server";
 import { executeQuery, isDbConfigured } from "@/lib/db";
-import { cookies } from "next/headers";
 import fs from "fs";
 import path from "path";
-
-/**
- * Shared helper to verify if the current user is authenticated as administrator.
- */
-async function checkAuth(): Promise<boolean> {
-  const cookieStore = await cookies();
-  const session = cookieStore.get("spl_session");
-  return !!(session && session.value === "spl_admin_logged_in");
-}
+import { checkAuth } from "@/lib/auth";
 
 const jsonPath = path.join(process.cwd(), "src/data/contactInfo.json");
 
